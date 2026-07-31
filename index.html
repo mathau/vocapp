@@ -39,10 +39,10 @@ button {
 
 <script type="module">
 
-import { initializeApp } 
+import { initializeApp }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-import { 
+import {
 getAuth,
 GoogleAuthProvider,
 signInWithPopup
@@ -58,39 +58,23 @@ getDoc
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const app = initializeApp(firebaseConfig);
-
-const auth = getAuth(app);
-
-const provider = new GoogleAuthProvider();
-	
-
+// UWAGA: firebaseConfig musi być zadeklarowane PRZED użyciem,
+// i tylko raz (wcześniej było zdublowane, co powodowało błąd składni
+// i przez to CAŁY skrypt się nie wykonywał - dlatego przycisk logowania nie działał)
 const firebaseConfig = {
-
   apiKey: "AIzaSyCkMiql3H5AxIyFnrMV2k5smd0kJCXJ4nU",
-
   authDomain: "vocapp-d6988.firebaseapp.com",
-
   projectId: "vocapp-d6988",
-
   storageBucket: "vocapp-d6988.firebasestorage.app",
-
   messagingSenderId: "690642556103",
-
   appId: "1:690642556103:web:78c5e0f76c5528ead25ae2",
-
   measurementId: "G-Y15DGGKPNP"
-
 };
 
-
-
 const app = initializeApp(firebaseConfig);
-
-
 const auth = getAuth(app);
-
 const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
 
 async function loginGoogle(){
 
