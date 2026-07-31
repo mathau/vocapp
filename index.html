@@ -45,7 +45,8 @@ from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
 getAuth,
 GoogleAuthProvider,
-signInWithPopup
+signInWithPopup,
+onAuthStateChanged
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
@@ -106,6 +107,31 @@ async function loginGoogle(){
 window.loginGoogle = loginGoogle;
 
 window.signInWithPopup = signInWithPopup;
+
+
+// Wystawiamy Firestore na window, żeby zwykły <script> (nie-module)
+// mógł zapisywać/czytać postęp użytkownika
+window.db = db;
+window.fsDoc = doc;
+window.fsSetDoc = setDoc;
+window.fsGetDoc = getDoc;
+
+window.currentUser = null;
+
+onAuthStateChanged(auth, function(user){
+
+    window.currentUser = user;
+
+    document.getElementById("loginStatus").innerHTML =
+    user ? "Zalogowano: " + user.email : "Nie zalogowano";
+
+    // jeśli lista słówek jest już załadowana, doczytaj/odśwież postęp
+    // (np. po odświeżeniu strony, gdy sesja jest zapamiętana)
+    if(typeof window.onAuthChangedReloadProgress === "function"){
+        window.onAuthChangedReloadProgress();
+    }
+
+});
 
 </script>
 
@@ -181,6 +207,20 @@ let words = [];
 let current = null;
 
 let checking = false;
+
+let currentListName = null; // nazwa aktualnie wybranego pliku csv
+
+
+// tworzy stabilne, "bezpieczne" ID słówka na podstawie tekstu (do zapisu w Firestore)
+function makeSafeId(text){
+
+    return text
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"") // usuń polskie znaki diakrytyczne
+    .replace(/[^a-z0-9]+/g,"_")
+    .replace(/^_+|_+$/g,"");
+
+}
 
 
 // ---- Konfiguracja repozytorium GitHub ----
@@ -260,6 +300,8 @@ async function loadSelectedCsv(){
     if(url == "")
         return;
 
+    currentListName = select.options[select.selectedIndex].textContent;
+
     document.getElementById("info").innerHTML = "Ładowanie pliku...";
 
     try {
@@ -268,7 +310,7 @@ async function loadSelectedCsv(){
 
         let text = await response.text();
 
-        loadWords(text);
+        await loadWords(text);
 
     }
     catch(error){
@@ -290,7 +332,7 @@ window.addEventListener("DOMContentLoaded", loadCsvFileList);
 
 
 
-function loadWords(text){
+async function loadWords(text){
 
 
     words=[];
@@ -324,11 +366,19 @@ function loadWords(text){
         if(row.length>=2){
 
 
+            let en = row[0].replaceAll('"',"").trim();
+
+            let pl = row[1].replaceAll('"',"").trim();
+
             words.push({
 
-                en: row[0].replaceAll('"',"").trim(),
+                id: makeSafeId(en),
 
-                pl: row[1].replaceAll('"',"").trim()
+                en: en,
+
+                pl: pl,
+
+                score: 0
 
             });
 
@@ -340,6 +390,9 @@ function loadWords(text){
 
 
 
+    await loadProgressForCurrentList();
+
+
     document.getElementById("info").innerHTML =
     "Załadowano: "+words.length+" słówek";
 
@@ -348,6 +401,84 @@ function loadWords(text){
 
 
 }
+
+
+// Doczytuje zapisany postęp (wyniki słówek) dla aktualnie wybranej listy
+// i danego zalogowanego użytkownika. Jeśli nikt nie jest zalogowany - nic nie robi.
+async function loadProgressForCurrentList(){
+
+    if(!window.currentUser || !currentListName || words.length==0)
+        return;
+
+    try {
+
+        let docId = window.currentUser.uid + "_" + makeSafeId(currentListName);
+
+        let ref = window.fsDoc(window.db, "progress", docId);
+
+        let snap = await window.fsGetDoc(ref);
+
+        if(snap.exists()){
+
+            let data = snap.data();
+
+            words.forEach(function(w){
+
+                if(typeof data[w.id] == "number"){
+                    w.score = data[w.id];
+                }
+
+            });
+
+        }
+
+    }
+    catch(error){
+
+        console.log(error);
+
+    }
+
+}
+
+
+// Zapisuje wynik pojedynczego słówka do Firestore (jeśli użytkownik jest zalogowany)
+async function saveWordProgress(wordObj){
+
+    if(!window.currentUser || !currentListName)
+        return;
+
+    try {
+
+        let docId = window.currentUser.uid + "_" + makeSafeId(currentListName);
+
+        let ref = window.fsDoc(window.db, "progress", docId);
+
+        let payload = {};
+
+        payload[wordObj.id] = wordObj.score;
+
+        await window.fsSetDoc(ref, payload, { merge: true });
+
+    }
+    catch(error){
+
+        console.log(error);
+
+    }
+
+}
+
+
+// Wywoływane z modułu Firebase, gdy zmieni się stan logowania
+// (np. użytkownik się zaloguje albo strona odświeży się z zapamiętaną sesją)
+window.onAuthChangedReloadProgress = async function(){
+
+    if(words.length > 0){
+        await loadProgressForCurrentList();
+    }
+
+};
 
 
 
@@ -439,6 +570,8 @@ function checkAnswer(){
 	if(answer==correctAnswer.toLowerCase()){
 
 
+        current.score = (current.score||0) + 1;
+
         document.getElementById("result").innerHTML=
         "✅";
 
@@ -447,11 +580,16 @@ function checkAnswer(){
     else{
 
 
+        current.score = (current.score||0) - 1;
+
         document.getElementById("result").innerHTML=
         "❌ "+correctAnswer
 
 
     }
+
+
+    saveWordProgress(current);
 
 
     setTimeout(nextWord,1500);
