@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+
+<title>xxx</title>
+
+<style>
+
+body {
+    font-family: Arial;
+    text-align: center;
+    margin-top: 40px;
+}
+
+#word {
+    font-size: 25px;
+    margin: 30px;
+}
+
+input {
+    font-size: 15px;
+    padding: 10px;
+}
+
+button {
+    font-size: 15px;
+    padding: 5px 20px;
+    margin: 10px;
+}
+
+#result {
+    font-size: 28px;
+    margin: 20px;
+}
+
+</style>
+
+<script type="module">
+
+import { initializeApp } 
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import { 
+getAuth,
+GoogleAuthProvider,
+signInWithPopup
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+
+import {
+getFirestore,
+doc,
+setDoc,
+getDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyCkMiql3H5AxIyFnrMV2k5smd0kJCXJ4nU",
+
+  authDomain: "vocapp-d6988.firebaseapp.com",
+
+  projectId: "vocapp-d6988",
+
+  storageBucket: "vocapp-d6988.firebasestorage.app",
+
+  messagingSenderId: "690642556103",
+
+  appId: "1:690642556103:web:78c5e0f76c5528ead25ae2",
+
+  measurementId: "G-Y15DGGKPNP"
+
+};
+
+
+
+const app = initializeApp(firebaseConfig);
+
+
+const auth = getAuth(app);
+
+const db = getFirestore(app);
+
+
+
+window.firebaseAuth = auth;
+window.firebaseDB = db;
+window.firebaseGoogleProvider = new GoogleAuthProvider();
+
+window.signInWithPopup = signInWithPopup;
+
+</script>
+
+</head>
+
+
+<body>
+
+<h1>xxx</h1>
+
+<button onclick="loginGoogle()">
+Zaloguj przez Google
+</button>
+
+<p id="loginStatus">
+Nie zalogowano
+</p>
+
+<input type="file" id="file" accept=".csv">
+
+<p id="info">
+Nie wybrano pliku
+</p>
+
+<select id="direction" onchange="nextWord()">
+
+<option value="pl-en">
+Polski → English
+</option>
+
+<option value="en-pl">
+English → Polski
+</option>
+
+</select>
+
+<div id="word">
+-
+</div>
+
+
+<input 
+id="answer"
+placeholder="Tłumaczenie"
+onkeydown="if(event.key==='Enter') checkAnswer()"
+>
+
+
+<br>
+
+<button onclick="checkAnswer()">
+Sprawdź
+</button>
+
+
+<button onclick="nextWord()">
+Pomiń
+</button>
+
+
+<div id="result"></div>
+
+
+<script>
+
+
+let words = [];
+
+let current = null;
+
+let checking = false;
+
+
+
+document
+.getElementById("file")
+.addEventListener("change", function(e){
+
+
+    let file = e.target.files[0];
+
+
+    let reader = new FileReader();
+
+
+    reader.onload = function(){
+
+        loadWords(reader.result);
+
+    };
+
+
+    reader.readAsText(file,"UTF-8");
+
+
+});
+
+
+
+
+function loadWords(text){
+
+
+    words=[];
+
+
+    let lines=text.split(/\r?\n/);
+
+
+    // wykrycie separatora
+
+    let separator=",";
+
+    if(lines[0].includes(";")){
+        separator=";";
+    }
+
+
+
+    for(let i=1;i<lines.length;i++){
+
+
+        if(lines[i].trim()=="")
+            continue;
+
+
+
+        let row=lines[i].split(separator);
+
+
+
+        if(row.length>=2){
+
+
+            words.push({
+
+                en: row[0].replaceAll('"',"").trim(),
+
+                pl: row[1].replaceAll('"',"").trim()
+
+            });
+
+
+        }
+
+
+    }
+
+
+
+    document.getElementById("info").innerHTML =
+    "Załadowano: "+words.length+" słówek";
+
+
+    nextWord();
+
+
+}
+
+
+
+
+
+function nextWord(){
+
+
+    if(words.length==0)
+        return;
+
+
+
+    current =
+    words[Math.floor(Math.random()*words.length)];
+
+
+
+	let direction =
+	document.getElementById("direction").value;
+
+
+	if(direction=="en-pl"){
+
+		document.getElementById("word").innerHTML =
+		current.en;
+
+	}
+	else{
+
+		document.getElementById("word").innerHTML =
+		current.pl;
+
+	}
+
+
+    document.getElementById("answer").value="";
+
+
+    document.getElementById("result").innerHTML="";
+
+	checking = false;
+
+}
+
+
+
+
+function checkAnswer(){
+
+	if(checking)
+		return;
+
+	checking = true;
+
+    if(current==null)
+        return;
+
+
+
+    let answer =
+    document.getElementById("answer")
+    .value
+    .toLowerCase()
+    .trim();
+
+
+
+	let direction =
+	document.getElementById("direction").value;
+
+
+	let correctAnswer;
+
+
+	if(direction=="en-pl"){
+
+		correctAnswer = current.pl;
+
+	}
+	else{
+
+		correctAnswer = current.en;
+
+	}
+
+
+
+	if(answer==correctAnswer.toLowerCase()){
+
+
+        document.getElementById("result").innerHTML=
+        "✅";
+
+
+    }
+    else{
+
+
+        document.getElementById("result").innerHTML=
+        "❌ "+correctAnswer
+
+
+    }
+
+
+    setTimeout(nextWord,1500);
+
+
+}
+
+
+async function loginGoogle(){
+
+    try {
+
+        let provider = window.firebaseGoogleProvider;
+
+        let auth = window.firebaseAuth;
+
+
+        let result = await window.signInWithPopup(
+            auth,
+            provider
+        );
+
+
+        document.getElementById("loginStatus").innerHTML =
+        "Zalogowano: " + result.user.email;
+
+
+        console.log(result.user);
+
+
+    }
+    catch(error){
+
+        console.log(error);
+
+        alert(
+            "Błąd logowania: " + error.message
+        );
+
+    }
+
+}
+
+</script>
+
+
+</body>
+
+</html>
