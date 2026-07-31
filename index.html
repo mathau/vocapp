@@ -215,6 +215,10 @@ Pomiń
 
 <div id="result"></div>
 
+<button id="overrideBtn" style="display:none;" onclick="overrideCorrect()">
+↑ Mam rację
+</button>
+
 
 <script>
 
@@ -224,6 +228,10 @@ let words = [];
 let current = null;
 
 let checking = false;
+
+let lastAnswerCorrect = null; // null = brak odpowiedzi, true/false po sprawdzeniu
+
+let autoAdvanceTimer = null;
 
 let currentListName = null; // nazwa aktualnie wybranego pliku csv
 
@@ -592,6 +600,12 @@ function pickWeightedWord(){
 function nextWord(){
 
 
+    if(autoAdvanceTimer){
+        clearTimeout(autoAdvanceTimer);
+        autoAdvanceTimer = null;
+    }
+
+
     if(words.length==0)
         return;
 
@@ -623,6 +637,10 @@ function nextWord(){
 
 
     document.getElementById("result").innerHTML="";
+
+    document.getElementById("overrideBtn").style.display="none";
+
+    lastAnswerCorrect = null;
 
 	checking = false;
 
@@ -700,8 +718,12 @@ function checkAnswer(){
 
         current.score = clampScore((current.score||0) + 1);
 
+        lastAnswerCorrect = true;
+
         document.getElementById("result").innerHTML=
         "✅" + dikiLink;
+
+        autoAdvanceTimer = setTimeout(nextWord, 700);
 
 
     }
@@ -710,8 +732,12 @@ function checkAnswer(){
 
         current.score = clampScore((current.score||0) - 1);
 
+        lastAnswerCorrect = false;
+
         document.getElementById("result").innerHTML=
         "❌ "+correctAnswer + dikiLink;
+
+        document.getElementById("overrideBtn").style.display="inline-block";
 
 
     }
@@ -724,6 +750,44 @@ function checkAnswer(){
 
 
 }
+
+
+// Gdy odpowiedź została uznana za złą, ale użytkownik twierdzi, że jednak
+// miał rację - cofa karę (-1) i liczy jak za dobrą odpowiedź (+1), czyli
+// łącznie +2 względem stanu sprzed korekty.
+function overrideCorrect(){
+
+    if(!checking || lastAnswerCorrect !== false)
+        return;
+
+    if(current==null)
+        return;
+
+    current.score = clampScore((current.score||0) + 2);
+
+    updateStats();
+
+    saveWordProgress(current);
+
+    nextWord();
+
+}
+
+
+window.overrideCorrect = overrideCorrect;
+
+
+window.addEventListener("keydown", function(e){
+
+    if(e.key === "ArrowUp" && checking && lastAnswerCorrect === false){
+
+        e.preventDefault();
+
+        overrideCorrect();
+
+    }
+
+});
 	
 </script>
 
