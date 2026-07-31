@@ -163,7 +163,7 @@ onAuthStateChanged(auth, function(user){
 <h1>VocApp</h1>
 
 <button onclick="loginGoogle()">
-Zaloguj przez Google
+Zaloguj się kontem Google
 </button>
 
 <p id="loginStatus">
@@ -234,7 +234,7 @@ Pomiń
 </button>
 
 <div id="meaningEditBox" style="display:none; margin-top:10px;">
-<input id="meaningInput" placeholder="Nowe znaczenie (np. przebrnąć przez, zrealizować, wykonywać)" size="40">
+<input id="meaningInput" placeholder="Nowe znaczenie" size="40">
 <button onclick="updateMeaning()">Aktualizuj</button>
 </div>
 
@@ -262,7 +262,7 @@ let csvSeparator = ","; // wykryty separator (do eksportu)
 // Zaloguj się raz, skopiuj swoje UID (widoczne obok statusu logowania)
 // i wklej je tutaj. Samo ukrycie przycisków w JS to tylko UX -
 // realna ochrona jest w regułach Firestore (patrz wiadomość z regułami).
-const ADMIN_UID = "TU_WKLEJ_SWOJE_UID";
+const ADMIN_UID = "yRqVYpfVg9N6BzBJHITlKkypI3g1";
 
 function isAdmin(){
     return window.currentUser && window.currentUser.uid === ADMIN_UID;
@@ -920,7 +920,7 @@ function checkAnswer(){
 
 	let dikiLink =
 	'<div style="font-size:16px;margin-top:8px;">' +
-	'<a href="' + dikiUrl + '" target="_blank" rel="noopener noreferrer">Sprawdź na diki.pl</a>' +
+	'<a href="' + dikiUrl + '" target="_blank" rel="noopener noreferrer">Sprawdź tłumaczenie</a>' +
 	'</div>';
 
 
@@ -934,7 +934,7 @@ function checkAnswer(){
         document.getElementById("result").innerHTML=
         "✅" + dikiLink;
 
-        autoAdvanceTimer = setTimeout(nextWord, 700);
+        autoAdvanceTimer = setTimeout(nextWord, 1200);
 
 
     }
