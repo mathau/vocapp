@@ -92,7 +92,34 @@ const auth = getAuth(app);
 
 const db = getFirestore(app);
 
+async function loginGoogle(){
 
+    try {
+
+        const result = await signInWithPopup(
+            auth,
+            provider
+        );
+
+        document.getElementById("loginStatus").innerHTML =
+        "Zalogowano: " + result.user.email;
+
+        console.log(result.user);
+
+    }
+    catch(error){
+
+        console.log(error);
+
+        alert(
+            "Błąd logowania: " + error.message
+        );
+
+    }
+
+}
+
+window.loginGoogle = loginGoogle;
 
 window.signInWithPopup = signInWithPopup;
 
@@ -363,36 +390,6 @@ function checkAnswer(){
 
 
 }
-
-
-async function loginGoogle(){
-
-    try {
-
-        const result = await signInWithPopup(
-            auth,
-            provider
-        );
-
-        document.getElementById("loginStatus").innerHTML =
-        "Zalogowano: " + result.user.email;
-
-        console.log(result.user);
-
-    }
-    catch(error){
-
-        console.log(error);
-
-        alert(
-            "Błąd logowania: " + error.message
-        );
-
-    }
-
-}
-
-window.loginGoogle = loginGoogle;
 	
 </script>
 
