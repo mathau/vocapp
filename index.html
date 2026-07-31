@@ -58,7 +58,12 @@ getDoc
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+const app = initializeApp(firebaseConfig);
 
+const auth = getAuth(app);
+
+const provider = new GoogleAuthProvider();
+	
 
 const firebaseConfig = {
 
@@ -88,10 +93,6 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 
-
-window.firebaseAuth = auth;
-window.firebaseDB = db;
-window.firebaseGoogleProvider = new GoogleAuthProvider();
 
 window.signInWithPopup = signInWithPopup;
 
@@ -368,23 +369,15 @@ async function loginGoogle(){
 
     try {
 
-        let provider = window.firebaseGoogleProvider;
-
-        let auth = window.firebaseAuth;
-
-
-        let result = await window.signInWithPopup(
+        const result = await signInWithPopup(
             auth,
             provider
         );
 
-
         document.getElementById("loginStatus").innerHTML =
         "Zalogowano: " + result.user.email;
 
-
         console.log(result.user);
-
 
     }
     catch(error){
@@ -399,6 +392,8 @@ async function loginGoogle(){
 
 }
 
+window.loginGoogle = loginGoogle;
+	
 </script>
 
 
