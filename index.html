@@ -24,6 +24,16 @@ input {
     padding: 10px;
 }
 
+#answer {
+    font-size: 19px;
+}
+
+.small-btn {
+    font-size: 12px;
+    padding: 3px 10px;
+    margin: 0 0 0 8px;
+}
+
 button {
     font-size: 15px;
     padding: 5px 20px;
@@ -133,7 +143,7 @@ onAuthStateChanged(auth, function(user){
     window.currentUser = user;
 
     document.getElementById("loginStatus").innerHTML =
-    user ? "Zalogowano: " + user.email + " (UID: " + user.uid + ")" : "Nie zalogowano";
+    user ? "Zalogowano: " + user.email : "Nie zalogowano";
 
     // jeśli lista słówek jest już załadowana, doczytaj/odśwież postęp
     // (np. po odświeżeniu strony, gdy sesja jest zapamiętana)
@@ -166,12 +176,8 @@ Nie zalogowano
 </option>
 </select>
 
-<p id="info">
-Ładowanie listy plików...
-</p>
-
-<button id="downloadCsvBtn" style="display:none;" onclick="downloadUpdatedCsv()">
-⬇ Pobierz zaktualizowany CSV
+<button id="downloadCsvBtn" class="small-btn" style="display:none;" onclick="downloadUpdatedCsv()">
+⬇ Pobierz aktualną listę
 </button>
 
 <select id="direction" onchange="nextWord()">
@@ -185,6 +191,10 @@ English → Polski
 </option>
 
 </select>
+
+<p id="info">
+Ładowanie listy plików...
+</p>
 
 <div id="stats">
 <span>Do poprawy: 0</span>
@@ -220,7 +230,7 @@ Pomiń
 <div id="result"></div>
 
 <button id="overrideBtn" style="display:none;" onclick="overrideCorrect()">
-↑ To jednak dobrze (+1)
+↑ Mam rację
 </button>
 
 <div id="meaningEditBox" style="display:none; margin-top:10px;">
@@ -252,7 +262,7 @@ let csvSeparator = ","; // wykryty separator (do eksportu)
 // Zaloguj się raz, skopiuj swoje UID (widoczne obok statusu logowania)
 // i wklej je tutaj. Samo ukrycie przycisków w JS to tylko UX -
 // realna ochrona jest w regułach Firestore (patrz wiadomość z regułami).
-const ADMIN_UID = "yRqVYpfVg9N6BzBJHITlKkypI3g1";
+const ADMIN_UID = "TU_WKLEJ_SWOJE_UID";
 
 function isAdmin(){
     return window.currentUser && window.currentUser.uid === ADMIN_UID;
