@@ -133,7 +133,7 @@ onAuthStateChanged(auth, function(user){
     window.currentUser = user;
 
     document.getElementById("loginStatus").innerHTML =
-    user ? "Zalogowano: " + user.email : "Nie zalogowano";
+    user ? "Zalogowano: " + user.email + " (UID: " + user.uid + ")" : "Nie zalogowano";
 
     // jeśli lista słówek jest już załadowana, doczytaj/odśwież postęp
     // (np. po odświeżeniu strony, gdy sesja jest zapamiętana)
@@ -169,6 +169,10 @@ Nie zalogowano
 <p id="info">
 Ładowanie listy plików...
 </p>
+
+<button id="downloadCsvBtn" style="display:none;" onclick="downloadUpdatedCsv()">
+⬇ Pobierz zaktualizowany CSV
+</button>
 
 <select id="direction" onchange="nextWord()">
 
@@ -216,8 +220,13 @@ Pomiń
 <div id="result"></div>
 
 <button id="overrideBtn" style="display:none;" onclick="overrideCorrect()">
-↑ Mam rację
+↑ To jednak dobrze (+1)
 </button>
+
+<div id="meaningEditBox" style="display:none; margin-top:10px;">
+<input id="meaningInput" placeholder="Nowe znaczenie (np. przebrnąć przez, zrealizować, wykonywać)" size="40">
+<button onclick="updateMeaning()">Aktualizuj</button>
+</div>
 
 
 <script>
@@ -234,6 +243,29 @@ let lastAnswerCorrect = null; // null = brak odpowiedzi, true/false po sprawdzen
 let autoAdvanceTimer = null;
 
 let currentListName = null; // nazwa aktualnie wybranego pliku csv
+
+let csvHeaderLine = ""; // oryginalny nagłówek csv (do eksportu)
+
+let csvSeparator = ","; // wykryty separator (do eksportu)
+
+// ---- Panel admina ----
+// Zaloguj się raz, skopiuj swoje UID (widoczne obok statusu logowania)
+// i wklej je tutaj. Samo ukrycie przycisków w JS to tylko UX -
+// realna ochrona jest w regułach Firestore (patrz wiadomość z regułami).
+const ADMIN_UID = "TU_WKLEJ_SWOJE_UID";
+
+function isAdmin(){
+    return window.currentUser && window.currentUser.uid === ADMIN_UID;
+}
+
+// Pokazuje/ukrywa elementy dostępne tylko dla admina (np. przycisk pobierania CSV)
+function updateAdminUI(){
+
+    let adminBtn = document.getElementById("downloadCsvBtn");
+
+    adminBtn.style.display = isAdmin() ? "inline-block" : "none";
+
+}
 
 // Zakres, w jakim mieści się wynik słówka. Ogranicza "uciekanie"
 // wyniku w nieskończoność (jedna zła odpowiedź nie zniweczy 20 dobrych).
@@ -374,6 +406,8 @@ async function loadWords(text){
 
     let lines=text.split(/\r?\n/);
 
+    csvHeaderLine = lines[0];
+
 
     // wykrycie separatora
 
@@ -382,6 +416,8 @@ async function loadWords(text){
     if(lines[0].includes(";")){
         separator=";";
     }
+
+    csvSeparator = separator;
 
 
 
@@ -426,8 +462,12 @@ async function loadWords(text){
 
     await loadProgressForCurrentList();
 
+    await loadMeaningsForCurrentList();
+
 
     updateStats();
+
+    updateAdminUI();
 
 
     document.getElementById("info").innerHTML =
@@ -516,7 +556,166 @@ window.onAuthChangedReloadProgress = async function(){
         updateStats();
     }
 
+    updateAdminUI();
+
 };
+
+
+// Doczytuje poprawki znaczeń dla aktualnie wybranej listy (współdzielone,
+// widoczne dla wszystkich - nie trzeba być zalogowanym żeby je zobaczyć)
+async function loadMeaningsForCurrentList(){
+
+    if(!currentListName || words.length==0)
+        return;
+
+    try {
+
+        let docId = makeSafeId(currentListName);
+
+        let ref = window.fsDoc(window.db, "meanings", docId);
+
+        let snap = await window.fsGetDoc(ref);
+
+        if(snap.exists()){
+
+            let data = snap.data();
+
+            words.forEach(function(w){
+
+                if(typeof data[w.id] == "string"){
+                    w.pl = data[w.id];
+                }
+
+            });
+
+        }
+
+    }
+    catch(error){
+
+        console.log(error);
+
+    }
+
+}
+
+
+// Zapisuje poprawione znaczenie słówka do Firestore (tylko admin - reguły
+// Firestore i tak to wymuszą, ale sprawdzamy też po stronie klienta)
+async function saveMeaningUpdate(wordObj, newMeaning){
+
+    if(!isAdmin() || !currentListName)
+        return;
+
+    try {
+
+        let docId = makeSafeId(currentListName);
+
+        let ref = window.fsDoc(window.db, "meanings", docId);
+
+        let payload = {};
+
+        payload[wordObj.id] = newMeaning;
+
+        await window.fsSetDoc(ref, payload, { merge: true });
+
+        wordObj.pl = newMeaning;
+
+    }
+    catch(error){
+
+        console.log(error);
+
+        alert("Błąd zapisu znaczenia: " + error.message);
+
+    }
+
+}
+
+
+// Obsługa przycisku "Aktualizuj" w polu edycji znaczenia
+function updateMeaning(){
+
+    if(!isAdmin() || current==null)
+        return;
+
+    let newMeaning =
+    document.getElementById("meaningInput").value.trim();
+
+    if(newMeaning == "")
+        return;
+
+    saveMeaningUpdate(current, newMeaning);
+
+    document.getElementById("meaningEditBox").style.display = "none";
+
+}
+
+window.updateMeaning = updateMeaning;
+
+
+// Formatuje pojedyncze pole do zapisu w csv (cudzysłów jeśli zawiera separator/cudzysłów)
+function csvField(text, separator){
+
+    if(text.includes(separator) || text.includes('"') || text.includes("\n")){
+        return '"' + text.replaceAll('"','""') + '"';
+    }
+
+    return text;
+
+}
+
+
+// Buduje treść zaktualizowanego csv (oryginalny nagłówek + aktualne en/pl,
+// czyli już z uwzględnieniem wszystkich poprawek znaczeń)
+function buildCsvContent(){
+
+    let lines = [csvHeaderLine];
+
+    words.forEach(function(w){
+
+        let enField = csvField(w.en, csvSeparator);
+
+        let plField = csvField(w.pl, csvSeparator);
+
+        lines.push(enField + csvSeparator + plField);
+
+    });
+
+    return lines.join("\r\n");
+
+}
+
+
+// Pobiera zaktualizowany plik csv (tylko admin)
+function downloadUpdatedCsv(){
+
+    if(!isAdmin() || words.length==0)
+        return;
+
+    let content = buildCsvContent();
+
+    let blob = new Blob([content], { type: "text/csv;charset=utf-8;" });
+
+    let url = URL.createObjectURL(blob);
+
+    let a = document.createElement("a");
+
+    a.href = url;
+
+    a.download = currentListName || "lista.csv";
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    document.body.removeChild(a);
+
+    URL.revokeObjectURL(url);
+
+}
+
+window.downloadUpdatedCsv = downloadUpdatedCsv;
 
 
 // Aktualizuje licznik: do poprawy / nowe / znam / opanowane
@@ -640,6 +839,8 @@ function nextWord(){
 
     document.getElementById("overrideBtn").style.display="none";
 
+    document.getElementById("meaningEditBox").style.display="none";
+
     lastAnswerCorrect = null;
 
 	checking = false;
@@ -738,6 +939,14 @@ function checkAnswer(){
         "❌ "+correctAnswer + dikiLink;
 
         document.getElementById("overrideBtn").style.display="inline-block";
+
+        if(isAdmin()){
+
+            document.getElementById("meaningInput").value = current.pl;
+
+            document.getElementById("meaningEditBox").style.display="block";
+
+        }
 
 
     }
