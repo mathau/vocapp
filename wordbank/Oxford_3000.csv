@@ -340,7 +340,7 @@ betting;zakłady (hazard)
 between;między
 beyond;poza, ponad
 bicycle;rower
-bid 1;"oferta; licytować"
+bid;"oferta; licytować"
 big;duży
 bike;rower
 bill;rachunek, ustawa
@@ -475,8 +475,8 @@ camera;aparat, kamera
 camp;"obóz; obozować"
 campaign;kampania
 camping;kemping, biwakowanie
-can 1;puszka
-can 2;móc, potrafić
+can;puszka
+can;móc, potrafić
 cancel;odwoływać, anulować
 cancer;rak (choroba)
 candidate;kandydat
@@ -606,8 +606,8 @@ climate;klimat
 climb;wspinać się
 climbing;wspinaczka
 clock;zegar
-close 1;zamykać
-close 2;bliski, blisko
+close;zamykać
+close;bliski, blisko
 closed;zamknięty
 closely;blisko, uważnie
 closet;szafa
@@ -728,7 +728,7 @@ contact;"kontakt; kontaktować się"
 contain;zawierać
 container;pojemnik, kontener
 contemporary;współczesny
-content 1;"zadowolony; zawartość"
+content;"zadowolony; zawartość"
 contest;konkurs, spór
 context;kontekst
 continent;kontynent
@@ -999,7 +999,7 @@ divide;dzielić
 division;podział, dywizja
 divorce;"rozwód; rozwodzić się"
 divorced;rozwiedziony
-do 1;robić
+do;robić
 doctor;lekarz
 document;dokument
 dog;pies
@@ -1156,7 +1156,7 @@ enthusiastically;entuzjastycznie
 entire;cały
 entirely;całkowicie
 entitle;uprawniać, tytułować
-entrance 1;wejście
+entrance;wejście
 entry;wejście, wpis
 envelope;koperta
 environment;środowisko
@@ -1531,7 +1531,7 @@ grandson;wnuk
 grant;przyznawać, dotacja
 grass;trawa
 grateful;wdzięczny
-grave 1;grób
+grave;grób
 gravely;poważnie
 great;wielki, świetny
 greatly;bardzo, znacznie
@@ -1896,7 +1896,7 @@ lane;pas ruchu, uliczka
 language;język
 large;duży
 largely;w dużej mierze
-last 1;ostatni
+last;ostatni
 late;późny, spóźniony
 later;później
 latest;najnowszy
@@ -1909,9 +1909,9 @@ lawyer;prawnik
 lay;kłaść
 layer;warstwa
 lazy;leniwy
-lead 1;prowadzić
+lead;prowadzić
 leader;lider, przywódca
-leading 1;wiodący, główny
+leading;wiodący, główny
 leaf;liść
 league;liga
 lean;"chudy; opierać się, pochylać się"
@@ -1939,8 +1939,8 @@ library;biblioteka
 licence;licencja, prawo jazdy
 license;licencja, licencjonować
 lid;pokrywka
-lie 1;"kłamać; kłamstwo"
-lie 2;leżeć
+lie;"kłamać; kłamstwo"
+lie;leżeć
 lie around;leżeć bezczynnie
 lie down;kłaść się
 life;życie
@@ -1961,8 +1961,8 @@ listen;słuchać
 literature;literatura
 litre;litr
 little;mały, mało
-live 1;żyć, mieszkać
-live 2;"na żywo; żywy"
+live;żyć, mieszkać
+live;"na żywo; żywy"
 lively;żywy, energiczny
 live on;żyć z (czegoś), przetrwać
 live through;przeżyć (coś)
@@ -2120,7 +2120,7 @@ minister;minister
 ministry;ministerstwo
 minor;drobny, mniejszy
 minority;mniejszość
-minute 1;minuta
+minute;minuta
 mirror;lustro
 miss;"tęsknić, przegapić; panna"
 missing;brakujący, zaginiony
@@ -2356,7 +2356,7 @@ owe;być winnym (pieniądze)
 own;"własny; posiadać"
 owner;właściciel
 own up;przyznać się
-pace 1;tempo, krok
+pace;tempo, krok
 pack;"pakować; paczka"
 package;paczka, pakiet
 packaging;opakowanie
@@ -2371,7 +2371,7 @@ painting;obraz, malarstwo
 pair;para
 palace;pałac
 pale;blady
-pan 1;patelnia, rondel
+pan;patelnia, rondel
 panel;panel
 pants;spodnie (amerykański)
 paper;papier, gazeta
@@ -2414,7 +2414,7 @@ peak;szczyt
 pen;długopis, pióro
 pencil;ołówek
 penny;pens
-pension 1;emerytura
+pension;emerytura
 people;ludzie
 pepper;pieprz, papryka
 per;na (jednostkę)
@@ -2489,7 +2489,7 @@ plenty;mnóstwo, wiele
 plot;"fabuła; spisek"
 plug;wtyczka, korek
 plug in;podłączać (do prądu)
-plus 1;plus
+plus;plus
 p.m.;po południu (godzina)
 pocket;kieszeń
 poem;wiersz
@@ -2590,7 +2590,7 @@ probably;prawdopodobnie
 problem;problem
 procedure;procedura
 proceed;kontynuować, postępować
-process 1;proces
+process;proces
 produce;produkować
 producer;producent
 product;produkt
@@ -2745,7 +2745,7 @@ reflect;odzwierciedlać, zastanawiać się
 reform;"reforma; reformować"
 refrigerator;lodówka
 refusal;odmowa
-refuse 1;odmawiać
+refuse;odmawiać
 regard;uważać, dotyczyć
 regarding;odnośnie, dotyczący
 region;region
@@ -2847,8 +2847,8 @@ ridiculous;śmieszny, absurdalny
 riding;jazda konna
 right;"prawy, słuszny; prawo"
 rightly;słusznie
-ring 1;pierścionek, dzwonek
-ring 2;dzwonić
+ring;pierścionek, dzwonek
+ring;dzwonić
 ring back;oddzwonić
 rise;"wzrastać; wzrost"
 risk;"ryzyko; ryzykować"
@@ -2870,7 +2870,7 @@ round;"okrągły; dookoła"
 rounded;zaokrąglony
 route;trasa
 routine;rutyna
-row 1;rząd, kłótnia
+row;rząd, kłótnia
 royal;królewski
 rub;trzeć, pocierać
 rubber;guma
@@ -2943,7 +2943,7 @@ seal off;odizolować, zablokować
 search;"szukać; poszukiwanie"
 season;pora roku, sezon
 seat;siedzenie, miejsce
-second 1;"drugi; sekunda"
+second;"drugi; sekunda"
 secondary;drugorzędny, średni (szkoła)
 secret;"sekret; tajny"
 secretary;sekretarz, sekretarka
@@ -3379,8 +3379,8 @@ teach;uczyć
 teacher;nauczyciel
 teaching;nauczanie
 team;zespół, drużyna
-tear 1;łza
-tear 2;rwać, drzeć
+tear;łza
+tear;rwać, drzeć
 tear up;podrzeć
 technical;techniczny
 technique;technika, metoda
@@ -3646,8 +3646,8 @@ urge;"namawiać; silna chęć"
 urgent;pilny
 us;nas, nam
 use;"używać; użycie"
-used 1;przyzwyczajony (used to)
-used 2;używany, używanie
+used;przyzwyczajony (used to)
+used;używany, używanie
 used to;przyzwyczajony do, kiedyś (robił)
 useful;przydatny
 useless;bezużyteczny
@@ -3781,8 +3781,8 @@ willing;chętny
 willingly;chętnie
 willingness;chęć, gotowość
 win;wygrywać
-wind 1;wiatr
-wind 2;kręcić się, wić się
+wind;wiatr
+wind;kręcić się, wić się
 window;okno
 wine;wino
 wing;skrzydło
@@ -3817,7 +3817,7 @@ worship;czcić, wielbić
 worst;najgorszy
 worth;wart
 would;forma trybu warunkowego 'by'
-wound 1;rana
+wound;rana
 wounded;ranny
 wrap;owijać, pakować
 wrapping;opakowanie
