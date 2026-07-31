@@ -302,7 +302,7 @@ function playTone(freq, startTime, duration){
 
     gain.gain.setValueAtTime(0, startTime);
 
-    gain.gain.linearRampToValueAtTime(0.12, startTime + 0.02); // łagodny atak
+    gain.gain.linearRampToValueAtTime(0.3, startTime + 0.02); // łagodny atak
 
     gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration); // miękkie wygaszenie
 
@@ -984,12 +984,11 @@ function checkAnswer(){
 
 	if(answer==correctAnswer.toLowerCase()){
 
-
+		playCorrectSound();
+		
         current.score = clampScore((current.score||0) + 1);
 
         lastAnswerCorrect = true;
-
-	playCorrectSound();
 
         document.getElementById("result").innerHTML=
         "✅" + dikiLink;
