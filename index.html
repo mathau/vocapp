@@ -35,6 +35,16 @@ button {
     margin: 20px;
 }
 
+#stats {
+    font-size: 14px;
+    color: #444;
+    margin: 15px;
+}
+
+#stats span {
+    margin: 0 8px;
+}
+
 </style>
 
 <script type="module">
@@ -172,6 +182,13 @@ English → Polski
 
 </select>
 
+<div id="stats">
+<span>Do poprawy: 0</span>
+<span>Nowe: 0</span>
+<span>Znam: 0</span>
+<span>Opanowane: 0</span>
+</div>
+
 <div id="word">
 -
 </div>
@@ -210,6 +227,15 @@ let checking = false;
 
 let currentListName = null; // nazwa aktualnie wybranego pliku csv
 
+// Zakres, w jakim mieści się wynik słówka. Ogranicza "uciekanie"
+// wyniku w nieskończoność (jedna zła odpowiedź nie zniweczy 20 dobrych).
+const MIN_SCORE = -3;
+const MAX_SCORE = 5;
+
+function clampScore(score){
+    return Math.max(MIN_SCORE, Math.min(MAX_SCORE, score));
+}
+
 
 // tworzy stabilne, "bezpieczne" ID słówka na podstawie tekstu (do zapisu w Firestore)
 function makeSafeId(text){
@@ -228,7 +254,7 @@ function makeSafeId(text){
 const GITHUB_OWNER = "mathau";
 const GITHUB_REPO = "vocapp";
 const GITHUB_BRANCH = "main";
-const CSV_FOLDER = "wordbank"; // folder w repo, w którym trzymasz pliki csv
+const CSV_FOLDER = "words"; // folder w repo, w którym trzymasz pliki csv
 // -------------------------------------------
 
 
@@ -393,6 +419,9 @@ async function loadWords(text){
     await loadProgressForCurrentList();
 
 
+    updateStats();
+
+
     document.getElementById("info").innerHTML =
     "Załadowano: "+words.length+" słówek";
 
@@ -476,9 +505,85 @@ window.onAuthChangedReloadProgress = async function(){
 
     if(words.length > 0){
         await loadProgressForCurrentList();
+        updateStats();
     }
 
 };
+
+
+// Aktualizuje licznik: do poprawy / nowe / znam / opanowane
+function updateStats(){
+
+    let counts = {
+        below: 0,   // score < 0
+        fresh: 0,   // score == 0
+        learning: 0, // score 1-2
+        mastered: 0  // score > 2
+    };
+
+    words.forEach(function(w){
+
+        let s = w.score || 0;
+
+        if(s < 0){
+            counts.below++;
+        }
+        else if(s == 0){
+            counts.fresh++;
+        }
+        else if(s <= 2){
+            counts.learning++;
+        }
+        else{
+            counts.mastered++;
+        }
+
+    });
+
+    document.getElementById("stats").innerHTML =
+    "<span>Do poprawy: " + counts.below + "</span>" +
+    "<span>Nowe: " + counts.fresh + "</span>" +
+    "<span>Znam: " + counts.learning + "</span>" +
+    "<span>Opanowane: " + counts.mastered + "</span>";
+
+}
+
+
+// Losuje słówko z wagą zależną od wyniku - im gorszy wynik, tym częściej się trafia.
+// Waga = (MAX_SCORE - score) + 1, więc zawsze >= 1 (każde słówko ma jakąś szansę).
+function pickWeightedWord(){
+
+    let weights = [];
+
+    let totalWeight = 0;
+
+    words.forEach(function(w){
+
+        let weight = (MAX_SCORE - (w.score || 0)) + 1;
+
+        weights.push(weight);
+
+        totalWeight += weight;
+
+    });
+
+    let r = Math.random() * totalWeight;
+
+    let acc = 0;
+
+    for(let i=0; i<words.length; i++){
+
+        acc += weights[i];
+
+        if(r < acc){
+            return words[i];
+        }
+
+    }
+
+    return words[words.length-1];
+
+}
 
 
 
@@ -492,8 +597,7 @@ function nextWord(){
 
 
 
-    current =
-    words[Math.floor(Math.random()*words.length)];
+    current = pickWeightedWord();
 
 
 
@@ -570,7 +674,7 @@ function checkAnswer(){
 	if(answer==correctAnswer.toLowerCase()){
 
 
-        current.score = (current.score||0) + 1;
+        current.score = clampScore((current.score||0) + 1);
 
         document.getElementById("result").innerHTML=
         "✅";
@@ -580,13 +684,16 @@ function checkAnswer(){
     else{
 
 
-        current.score = (current.score||0) - 1;
+        current.score = clampScore((current.score||0) - 1);
 
         document.getElementById("result").innerHTML=
         "❌ "+correctAnswer
 
 
     }
+
+
+    updateStats();
 
 
     saveWordProgress(current);
