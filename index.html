@@ -197,13 +197,13 @@ English → Polski
 <input 
 id="answer"
 placeholder="Tłumaczenie"
-onkeydown="if(event.key==='Enter') checkAnswer()"
+onkeydown="if(event.key==='Enter') handleEnter()"
 >
 
 
 <br>
 
-<button onclick="checkAnswer()">
+<button onclick="handleEnter()">
 Sprawdź
 </button>
 
@@ -631,6 +631,21 @@ function nextWord(){
 
 
 
+// Enter (albo przycisk "Sprawdź") ma dwie role zależnie od stanu:
+// - jeśli jeszcze nie sprawdzono odpowiedzi -> sprawdź ją
+// - jeśli odpowiedź jest już pokazana (czekamy) -> przejdź do kolejnego słówka
+function handleEnter(){
+
+    if(checking){
+        nextWord();
+    }
+    else{
+        checkAnswer();
+    }
+
+}
+
+
 function checkAnswer(){
 
 	if(checking)
@@ -671,13 +686,22 @@ function checkAnswer(){
 
 
 
+	let dikiUrl =
+	"https://www.diki.pl/slownik-angielskiego?q=" + encodeURIComponent(current.en);
+
+	let dikiLink =
+	'<div style="font-size:16px;margin-top:8px;">' +
+	'<a href="' + dikiUrl + '" target="_blank" rel="noopener noreferrer">Sprawdź na diki.pl</a>' +
+	'</div>';
+
+
 	if(answer==correctAnswer.toLowerCase()){
 
 
         current.score = clampScore((current.score||0) + 1);
 
         document.getElementById("result").innerHTML=
-        "✅";
+        "✅" + dikiLink;
 
 
     }
@@ -687,7 +711,7 @@ function checkAnswer(){
         current.score = clampScore((current.score||0) - 1);
 
         document.getElementById("result").innerHTML=
-        "❌ "+correctAnswer
+        "❌ "+correctAnswer + dikiLink;
 
 
     }
@@ -697,9 +721,6 @@ function checkAnswer(){
 
 
     saveWordProgress(current);
-
-
-    setTimeout(nextWord,1500);
 
 
 }
