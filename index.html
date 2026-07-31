@@ -124,10 +124,14 @@ Zaloguj przez Google
 Nie zalogowano
 </p>
 
-<input type="file" id="file" accept=".csv">
+<select id="csvList" onchange="loadSelectedCsv()">
+<option value="">
+-- wybierz plik --
+</option>
+</select>
 
 <p id="info">
-Nie wybrano pliku
+Ładowanie listy plików...
 </p>
 
 <select id="direction" onchange="nextWord()">
@@ -179,29 +183,109 @@ let current = null;
 let checking = false;
 
 
-
-document
-.getElementById("file")
-.addEventListener("change", function(e){
-
-
-    let file = e.target.files[0];
-
-
-    let reader = new FileReader();
+// ---- Konfiguracja repozytorium GitHub ----
+// Zmień te wartości jeśli się nie zgadzają z Twoim repo
+const GITHUB_OWNER = "mathau";
+const GITHUB_REPO = "vocapp";
+const GITHUB_BRANCH = "main";
+const CSV_FOLDER = "words"; // folder w repo, w którym trzymasz pliki csv
+// -------------------------------------------
 
 
-    reader.onload = function(){
+async function loadCsvFileList(){
 
-        loadWords(reader.result);
+    try {
 
-    };
+        let url =
+        "https://api.github.com/repos/" + GITHUB_OWNER + "/" + GITHUB_REPO +
+        "/contents/" + CSV_FOLDER + "?ref=" + GITHUB_BRANCH;
+
+        let response = await fetch(url);
+
+        if(!response.ok){
+
+            document.getElementById("info").innerHTML =
+            "Błąd ładowania listy plików (kod " + response.status + "). Sprawdź czy folder '" + CSV_FOLDER + "' istnieje w repo.";
+
+            return;
+
+        }
+
+        let files = await response.json();
+
+        let csvFiles = files.filter(function(f){
+            return f.name.toLowerCase().endsWith(".csv");
+        });
+
+        let select = document.getElementById("csvList");
+
+        select.innerHTML = '<option value="">-- wybierz plik --</option>';
+
+        csvFiles.forEach(function(file){
+
+            let option = document.createElement("option");
+
+            option.value = file.download_url;
+
+            option.textContent = file.name;
+
+            select.appendChild(option);
+
+        });
+
+        document.getElementById("info").innerHTML =
+        csvFiles.length > 0
+        ? "Znaleziono " + csvFiles.length + " plik(ów) CSV. Wybierz z listy."
+        : "Nie znaleziono plików CSV w folderze '" + CSV_FOLDER + "'.";
+
+    }
+    catch(error){
+
+        console.log(error);
+
+        document.getElementById("info").innerHTML =
+        "Błąd: " + error.message;
+
+    }
+
+}
 
 
-    reader.readAsText(file,"UTF-8");
+async function loadSelectedCsv(){
+
+    let select = document.getElementById("csvList");
+
+    let url = select.value;
+
+    if(url == "")
+        return;
+
+    document.getElementById("info").innerHTML = "Ładowanie pliku...";
+
+    try {
+
+        let response = await fetch(url);
+
+        let text = await response.text();
+
+        loadWords(text);
+
+    }
+    catch(error){
+
+        console.log(error);
+
+        document.getElementById("info").innerHTML =
+        "Błąd ładowania pliku: " + error.message;
+
+    }
+
+}
 
 
-});
+window.loadSelectedCsv = loadSelectedCsv;
+
+window.addEventListener("DOMContentLoaded", loadCsvFileList);
 
 
 
