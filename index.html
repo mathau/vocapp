@@ -258,6 +258,64 @@ let csvHeaderLine = ""; // oryginalny nagłówek csv (do eksportu)
 
 let csvSeparator = ","; // wykryty separator (do eksportu)
 
+
+// ---- Dźwięk przy dobrej odpowiedzi ----
+// Generowany na żywo (Web Audio API), bez żadnych plików - delikatny,
+// dwutonowy "dzwoneczek" z miękkim, płynnym wybrzmieniem.
+let audioCtx = null;
+
+function playCorrectSound(){
+
+    try {
+
+        if(!audioCtx){
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        if(audioCtx.state === "suspended"){
+            audioCtx.resume();
+        }
+
+        let now = audioCtx.currentTime;
+
+        playTone(1046.5, now, 0.4);        // C6
+        playTone(1318.5, now + 0.09, 0.4); // E6
+
+    }
+    catch(error){
+
+        console.log(error);
+
+    }
+
+}
+
+function playTone(freq, startTime, duration){
+
+    let osc = audioCtx.createOscillator();
+
+    let gain = audioCtx.createGain();
+
+    osc.type = "sine";
+
+    osc.frequency.value = freq;
+
+    gain.gain.setValueAtTime(0, startTime);
+
+    gain.gain.linearRampToValueAtTime(0.12, startTime + 0.02); // łagodny atak
+
+    gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration); // miękkie wygaszenie
+
+    osc.connect(gain);
+
+    gain.connect(audioCtx.destination);
+
+    osc.start(startTime);
+
+    osc.stop(startTime + duration + 0.05);
+
+}
+
 // ---- Panel admina ----
 // Zaloguj się raz, skopiuj swoje UID (widoczne obok statusu logowania)
 // i wklej je tutaj. Samo ukrycie przycisków w JS to tylko UX -
@@ -930,6 +988,8 @@ function checkAnswer(){
         current.score = clampScore((current.score||0) + 1);
 
         lastAnswerCorrect = true;
+
+	playCorrectSound();
 
         document.getElementById("result").innerHTML=
         "✅" + dikiLink;
