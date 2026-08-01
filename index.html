@@ -34,6 +34,20 @@ input {
     font-size: 19px;
 }
 
+#answerRow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.result-icon {
+    display: inline-block;
+    width: 28px;
+    font-size: 22px;
+    text-align: center;
+}
+
 .small-btn {
     font-size: 12px;
     padding: 3px 10px;
@@ -45,8 +59,12 @@ input {
 }
 
 #loginStatus {
-    font-size: 12px;
-    color: #999;
+    font-size: 14px;
+    color: #444;
+}
+
+#logoutBtn {
+    color: #444;
 }
 
 button {
@@ -280,6 +298,8 @@ English → Polski
 </div>
 
 
+<div id="answerRow">
+<span id="resultIconLeft" class="result-icon"></span>
 <input 
 id="answer"
 placeholder="Tłumaczenie"
@@ -289,6 +309,8 @@ autocapitalize="off"
 spellcheck="false"
 onkeydown="if(event.key==='Enter') handleEnter()"
 >
+<span id="resultIconRight" class="result-icon"></span>
+</div>
 
 
 <br>
@@ -566,6 +588,10 @@ function resetToEmptyState(){
     document.getElementById("answer").value = "";
 
     document.getElementById("result").innerHTML = "";
+
+    document.getElementById("resultIconLeft").textContent = "";
+
+    document.getElementById("resultIconRight").textContent = "";
 
     document.getElementById("overrideBtn").style.display = "none";
 
@@ -1048,6 +1074,10 @@ function nextWord(){
 
     document.getElementById("result").innerHTML="";
 
+    document.getElementById("resultIconLeft").textContent = "";
+
+    document.getElementById("resultIconRight").textContent = "";
+
     document.getElementById("overrideBtn").style.display="none";
 
     document.getElementById("meaningEditBox").style.display="none";
@@ -1126,6 +1156,17 @@ function checkAnswer(){
 	'<a href="' + dikiUrl + '" target="_blank" rel="noopener noreferrer">Sprawdź tłumaczenie</a>' +
 	'</div>';
 
+	let cambridgeSlug =
+	current.en.trim().toLowerCase().replace(/\s+/g,"-");
+
+	let cambridgeUrl =
+	"https://dictionary.cambridge.org/dictionary/english/" + encodeURIComponent(cambridgeSlug);
+
+	let cambridgeLink =
+	'<div style="font-size:16px;margin-top:4px;">' +
+	'<a href="' + cambridgeUrl + '" target="_blank" rel="noopener noreferrer">Cambridge Dictionary</a>' +
+	'</div>';
+
 
 	if(answer==correctAnswer.toLowerCase()){
 
@@ -1137,8 +1178,12 @@ function checkAnswer(){
 
         lastAnswerCorrect = true;
 
+        document.getElementById("resultIconLeft").textContent = "✅";
+
+        document.getElementById("resultIconRight").textContent = "✅";
+
         document.getElementById("result").innerHTML=
-        "✅" + dikiLink;
+        dikiLink + cambridgeLink;
 
         autoAdvanceTimer = setTimeout(nextWord, 1200);
 
@@ -1151,8 +1196,12 @@ function checkAnswer(){
 
         lastAnswerCorrect = false;
 
+        document.getElementById("resultIconLeft").textContent = "❌";
+
+        document.getElementById("resultIconRight").textContent = "❌";
+
         document.getElementById("result").innerHTML=
-        "❌ "+correctAnswer + dikiLink;
+        correctAnswer + dikiLink + cambridgeLink;
 
         document.getElementById("overrideBtn").style.display="inline-block";
 
