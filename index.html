@@ -117,14 +117,14 @@ button {
     background: #4caf82;
 }
 
-@keyframes barPulse {
-    0% { transform: scaleY(1); }
-    40% { transform: scaleY(1.7); }
-    100% { transform: scaleY(1); }
+@keyframes segmentPulse {
+    0% { filter: brightness(1); }
+    40% { filter: brightness(1.7); }
+    100% { filter: brightness(1); }
 }
 
-.bar-pulse {
-    animation: barPulse 0.35s ease;
+.segment-pulse {
+    animation: segmentPulse 0.4s ease;
 }
 
 #comboDisplay {
@@ -542,7 +542,7 @@ function updateComboDisplay(){
 
         el.textContent = "Combo x" + comboCount + " " + flame;
 
-        el.style.display = "inline-block";
+        el.style.display = "block";
 
         el.classList.remove("combo-pulse");
 
@@ -571,19 +571,36 @@ function resetCombo(){
 }
 
 
-// Krótkie "pulsnięcie" całego paska postępu - widoczne niezależnie od tego,
-// jak małą (albo jak dużą, np. kilka tysięcy słówek) zmianę procentową
-// spowodowała ta jedna odpowiedź. Dzięki temu feedback działa tak samo
-// dla małej i dużej listy, nie tylko przez zmianę szerokości segmentów.
-function pulseProgressBar(){
+// Rozjaśnia (pulsuje) tylko ten segment paska, do którego właśnie "wpadło"
+// słówko po tej odpowiedzi - czerwony (do poprawy) jeśli wynik < 0,
+// zielony (znam) jeśli wynik > 0. Gdy wynik wynosi dokładnie 0 (czyli
+// słówko trafia/zostaje w "Pozostało") - świadomie NIE animujemy niczego,
+// np. przejście -1 -> 0 nie ma podświetlać zielonego segmentu "znam".
+// Działa niezależnie od wielkości listy, bo nie zależy od zmiany szerokości.
+function pulseScoreSegment(newScore){
 
-    let bar = document.getElementById("progressBar");
+    let selector;
 
-    bar.classList.remove("bar-pulse");
+    if(newScore < 0){
+        selector = ".progress-below";
+    }
+    else if(newScore > 0){
+        selector = ".progress-known";
+    }
+    else{
+        return; // score == 0 -> "pozostało", brak animacji
+    }
 
-    void bar.offsetWidth; // wymuszenie reflow, żeby animacja odpaliła się ponownie
+    let el = document.querySelector("#progressBar " + selector);
 
-    bar.classList.add("bar-pulse");
+    if(!el)
+        return;
+
+    el.classList.remove("segment-pulse");
+
+    void el.offsetWidth; // wymuszenie reflow, żeby animacja odpaliła się ponownie
+
+    el.classList.add("segment-pulse");
 
 }
 
@@ -1446,8 +1463,6 @@ function checkAnswer(){
 
         updateComboDisplay();
 
-        pulseProgressBar();
-
         if(comboCount % 10 === 0){
             triggerConfettiBurst(true);
         }
@@ -1476,8 +1491,6 @@ function checkAnswer(){
 
         resetCombo();
 
-        pulseProgressBar();
-
         document.getElementById("result").innerHTML=
         correctAnswer + dikiLink + cambridgeLink;
 
@@ -1496,6 +1509,8 @@ function checkAnswer(){
 
 
     updateStats();
+
+    pulseScoreSegment(current.score);
 
 
     saveWordProgress(current);
@@ -1525,8 +1540,6 @@ function overrideCorrect(){
 
     updateComboDisplay();
 
-    pulseProgressBar();
-
     if(comboCount % 10 === 0){
         triggerConfettiBurst(true);
     }
@@ -1535,6 +1548,8 @@ function overrideCorrect(){
     }
 
     updateStats();
+
+    pulseScoreSegment(current.score);
 
     saveWordProgress(current);
 
