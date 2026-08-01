@@ -13,11 +13,6 @@ body {
     text-align: center;
     margin-top: 40px;
     background-color: #ffffff;
-    transition: background-color 0.4s ease;
-}
-
-body.correct-flash {
-    background-color: #eafbf0;
 }
 
 #word {
@@ -32,6 +27,11 @@ input {
 
 #answer {
     font-size: 19px;
+    transition: background-color 0.3s ease;
+}
+
+#answer.correct-flash {
+    background-color: #8fe3a8;
 }
 
 #answerRow {
@@ -597,7 +597,7 @@ function resetToEmptyState(){
 
     document.getElementById("meaningEditBox").style.display = "none";
 
-    document.body.classList.remove("correct-flash");
+    document.getElementById("answer").classList.remove("correct-flash");
 
     document.getElementById("info").innerHTML = "Nie wybrano pliku.";
 
@@ -1082,7 +1082,7 @@ function nextWord(){
 
     document.getElementById("meaningEditBox").style.display="none";
 
-    document.body.classList.remove("correct-flash");
+    document.getElementById("answer").classList.remove("correct-flash");
 
     lastAnswerCorrect = null;
 
@@ -1152,7 +1152,7 @@ function checkAnswer(){
 	"https://www.diki.pl/slownik-angielskiego?q=" + encodeURIComponent(current.en);
 
 	let dikiLink =
-	'<div style="font-size:16px;margin-top:8px;">' +
+	'<div style="font-size:13px;margin-top:18px;">' +
 	'<a href="' + dikiUrl + '" target="_blank" rel="noopener noreferrer">Sprawdź tłumaczenie</a>' +
 	'</div>';
 
@@ -1163,7 +1163,7 @@ function checkAnswer(){
 	"https://dictionary.cambridge.org/dictionary/english/" + encodeURIComponent(cambridgeSlug);
 
 	let cambridgeLink =
-	'<div style="font-size:16px;margin-top:4px;">' +
+	'<div style="font-size:13px;margin-top:10px;">' +
 	'<a href="' + cambridgeUrl + '" target="_blank" rel="noopener noreferrer">Cambridge Dictionary</a>' +
 	'</div>';
 
@@ -1172,7 +1172,7 @@ function checkAnswer(){
 
 		playCorrectSound();
 
-		document.body.classList.add("correct-flash");
+		document.getElementById("answer").classList.add("correct-flash");
 		
         current.score = clampScore((current.score||0) + 1);
 
