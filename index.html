@@ -55,6 +55,34 @@ button {
     margin: 0 8px;
 }
 
+#progressBar {
+    display: flex;
+    width: 90%;
+    max-width: 500px;
+    height: 14px;
+    margin: 10px auto 20px auto;
+    border-radius: 7px;
+    overflow: hidden;
+    background: #eee;
+}
+
+#progressBar div {
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+.progress-below {
+    background: #e05a5a;
+}
+
+.progress-remaining {
+    background: #c9c9c9;
+}
+
+.progress-known {
+    background: #4caf82;
+}
+
 </style>
 
 <script type="module">
@@ -66,6 +94,7 @@ import {
 getAuth,
 GoogleAuthProvider,
 signInWithPopup,
+signOut,
 onAuthStateChanged
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -129,6 +158,26 @@ window.loginGoogle = loginGoogle;
 window.signInWithPopup = signInWithPopup;
 
 
+async function logoutGoogle(){
+
+    try {
+
+        await signOut(auth);
+
+    }
+    catch(error){
+
+        console.log(error);
+
+        alert("Błąd wylogowania: " + error.message);
+
+    }
+
+}
+
+window.logoutGoogle = logoutGoogle;
+
+
 // Wystawiamy Firestore na window, żeby zwykły <script> (nie-module)
 // mógł zapisywać/czytać postęp użytkownika
 window.db = db;
@@ -144,6 +193,10 @@ onAuthStateChanged(auth, function(user){
 
     document.getElementById("loginStatus").innerHTML =
     user ? "Konto: " + user.email : "Nie zalogowano";
+
+    document.getElementById("loginBtn").style.display = user ? "none" : "inline-block";
+
+    document.getElementById("logoutBtn").style.display = user ? "inline-block" : "none";
 
     // jeśli lista słówek jest już załadowana, doczytaj/odśwież postęp
     // (np. po odświeżeniu strony, gdy sesja jest zapamiętana)
@@ -162,8 +215,12 @@ onAuthStateChanged(auth, function(user){
 
 <h1>VocApp</h1>
 
-<button onclick="loginGoogle()">
+<button id="loginBtn" onclick="loginGoogle()">
 Zaloguj się kontem Google
+</button>
+
+<button id="logoutBtn" style="display:none;" onclick="logoutGoogle()">
+Wyloguj
 </button>
 
 <p id="loginStatus">
@@ -175,10 +232,6 @@ Nie zalogowano
 - Wybierz plik -
 </option>
 </select>
-
-<button id="downloadCsvBtn" class="small-btn" style="display:none;" onclick="downloadUpdatedCsv()">
-⬇ Pobierz aktualną listę
-</button>
 
 <select id="direction" onchange="nextWord()">
 
@@ -192,16 +245,21 @@ English → Polski
 
 </select>
 
+<button id="downloadCsvBtn" class="small-btn" style="display:none;" onclick="downloadUpdatedCsv()">
+⬇ Pobierz aktualną listę
+</button>
+
 <p id="info">
 Ładowanie listy plików...
 </p>
 
 <div id="stats">
 <span>Do poprawy: 0</span>
-<span>Nowe: 0</span>
+<span>Pozostało: 0</span>
 <span>Znam: 0</span>
-<span>Opanowane: 0</span>
 </div>
+
+<div id="progressBar"></div>
 
 <div id="word">
 -
@@ -211,6 +269,10 @@ English → Polski
 <input 
 id="answer"
 placeholder="Tłumaczenie"
+autocomplete="off"
+autocorrect="off"
+autocapitalize="off"
+spellcheck="false"
 onkeydown="if(event.key==='Enter') handleEnter()"
 >
 
@@ -620,8 +682,23 @@ async function saveWordProgress(wordObj){
 window.onAuthChangedReloadProgress = async function(){
 
     if(words.length > 0){
-        await loadProgressForCurrentList();
+
+        if(window.currentUser){
+
+            await loadProgressForCurrentList();
+
+        }
+        else{
+
+            // wylogowano - wracamy do trybu gościa, więc wyniki resetują się do 0
+            words.forEach(function(w){
+                w.score = 0;
+            });
+
+        }
+
         updateStats();
+
     }
 
     updateAdminUI();
@@ -786,14 +863,13 @@ function downloadUpdatedCsv(){
 window.downloadUpdatedCsv = downloadUpdatedCsv;
 
 
-// Aktualizuje licznik: do poprawy / nowe / znam / opanowane
+// Aktualizuje licznik (do poprawy / pozostało / znam) oraz pasek postępu
 function updateStats(){
 
     let counts = {
-        below: 0,   // score < 0
-        fresh: 0,   // score == 0
-        learning: 0, // score 1-2
-        mastered: 0  // score > 2
+        below: 0,    // score < 0  -> do poprawy
+        remaining: 0, // score == 0 -> pozostało
+        known: 0     // score > 0  -> znam
     };
 
     words.forEach(function(w){
@@ -804,24 +880,35 @@ function updateStats(){
             counts.below++;
         }
         else if(s == 0){
-            counts.fresh++;
-        }
-        else if(s <= 2){
-            counts.learning++;
+            counts.remaining++;
         }
         else{
-            counts.mastered++;
+            counts.known++;
         }
 
     });
 
     document.getElementById("stats").innerHTML =
     "<span>Do poprawy: " + counts.below + "</span>" +
-    "<span>Nowe: " + counts.fresh + "</span>" +
-    "<span>Znam: " + counts.learning + "</span>" +
-    "<span>Opanowane: " + counts.mastered + "</span>";
+    "<span>Pozostało: " + counts.remaining + "</span>" +
+    "<span>Znam: " + counts.known + "</span>";
+
+
+    let total = words.length;
+
+    let belowPct = total > 0 ? (counts.below / total * 100) : 0;
+
+    let remainingPct = total > 0 ? (counts.remaining / total * 100) : 0;
+
+    let knownPct = total > 0 ? (counts.known / total * 100) : 0;
+
+    document.getElementById("progressBar").innerHTML =
+    '<div class="progress-below" style="width:' + belowPct + '%;" title="Do poprawy: ' + counts.below + '"></div>' +
+    '<div class="progress-remaining" style="width:' + remainingPct + '%;" title="Pozostało: ' + counts.remaining + '"></div>' +
+    '<div class="progress-known" style="width:' + knownPct + '%;" title="Znam: ' + counts.known + '"></div>';
 
 }
+
 
 
 // Losuje słówko z wagą zależną od wyniku - im gorszy wynik, tym częściej się trafia.
