@@ -102,7 +102,7 @@ button {
 
 #progressBar div {
     height: 100%;
-    transition: width 0.3s ease;
+    transition: width 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .progress-below {
@@ -115,6 +115,63 @@ button {
 
 .progress-known {
     background: #4caf82;
+}
+
+#comboDisplay {
+    display: none;
+    font-size: 16px;
+    font-weight: bold;
+    color: #ff9800;
+    margin: 4px;
+}
+
+.combo-pulse {
+    animation: comboPulse 0.4s ease;
+}
+
+@keyframes comboPulse {
+    0% { transform: scale(1.4); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes wordBounce {
+    0% { transform: scale(0.85); opacity: 0; }
+    60% { transform: scale(1.06); opacity: 1; }
+    100% { transform: scale(1); }
+}
+
+.word-bounce {
+    animation: wordBounce 0.35s ease;
+}
+
+.confetti-container {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    overflow: hidden;
+}
+
+.confetti-piece {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    animation: confettiFly 1s ease-out forwards;
+}
+
+@keyframes confettiFly {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(var(--dx), var(--dy)) rotate(360deg);
+        opacity: 0;
+    }
 }
 
 </style>
@@ -294,6 +351,8 @@ English → Polski
 
 <div id="progressBar"></div>
 
+<div id="comboDisplay"></div>
+
 <div id="word">
 -
 </div>
@@ -355,13 +414,16 @@ let csvHeaderLine = ""; // oryginalny nagłówek csv (do eksportu)
 
 let csvSeparator = ","; // wykryty separator (do eksportu)
 
+let comboCount = 0; // licznik kolejnych dobrych odpowiedzi w tej sesji (nie zapisywany do bazy)
+
 
 // ---- Dźwięk przy dobrej odpowiedzi ----
 // Generowany na żywo (Web Audio API), bez żadnych plików - delikatny,
-// dwutonowy "dzwoneczek" z miękkim, płynnym wybrzmieniem.
+// dwutonowy "dzwoneczek" z miękkim, płynnym wybrzmieniem. Im dłuższe combo,
+// tym bogatszy akord (dokładamy kolejne, wyższe tony).
 let audioCtx = null;
 
-function playCorrectSound(){
+function playCorrectSound(combo){
 
     try {
 
@@ -377,6 +439,18 @@ function playCorrectSound(){
 
         playTone(1046.5, now, 0.4);        // C6
         playTone(1318.5, now + 0.09, 0.4); // E6
+
+        if(combo >= 3){
+            playTone(1568.0, now + 0.18, 0.4); // G6
+        }
+
+        if(combo >= 5){
+            playTone(2093.0, now + 0.27, 0.42); // C7
+        }
+
+        if(combo >= 10){
+            playTone(2637.0, now + 0.36, 0.45); // E7 - finałowy akcent
+        }
 
     }
     catch(error){
@@ -439,6 +513,99 @@ function playWrongSound(){
         console.log(error);
 
     }
+
+}
+
+
+// ---- Combo / streak ----
+// Licznik kolejnych dobrych odpowiedzi w bieżącej sesji (nie zapisywany
+// do bazy - resetuje się przy złej odpowiedzi, zmianie listy albo wylogowaniu).
+function updateComboDisplay(){
+
+    let el = document.getElementById("comboDisplay");
+
+    if(comboCount >= 3){
+
+        let flame = (comboCount % 10 === 0) ? "🔥🔥" : "🔥";
+
+        el.textContent = flame + " Combo x" + comboCount + " " + flame;
+
+        el.style.display = "inline-block";
+
+        el.classList.remove("combo-pulse");
+
+        void el.offsetWidth; // wymuszenie reflow, żeby animacja odpaliła się ponownie
+
+        el.classList.add("combo-pulse");
+
+    }
+    else{
+
+        el.style.display = "none";
+
+        el.textContent = "";
+
+    }
+
+}
+
+
+function resetCombo(){
+
+    comboCount = 0;
+
+    updateComboDisplay();
+
+}
+
+
+// Krótki, niewielki "wybuch" konfetti - bez żadnych bibliotek, kilka
+// kolorowych elementów, które wylatują na boki i znikają.
+function triggerConfettiBurst(big){
+
+    let container = document.createElement("div");
+
+    container.className = "confetti-container";
+
+    document.body.appendChild(container);
+
+    let count = big ? 40 : 18;
+
+    let colors = ["#82c7a8", "#ffd166", "#ef476f", "#118ab2", "#8ecae6"];
+
+    for(let i=0; i<count; i++){
+
+        let piece = document.createElement("div");
+
+        piece.className = "confetti-piece";
+
+        piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+
+        let angle = Math.random() * Math.PI * 2;
+
+        let distance = (big ? 220 : 120) + Math.random()*80;
+
+        let dx = Math.cos(angle) * distance;
+
+        let dy = Math.sin(angle) * distance - 40; // lekko w górę
+
+        piece.style.setProperty("--dx", dx + "px");
+
+        piece.style.setProperty("--dy", dy + "px");
+
+        piece.style.left = "50%";
+
+        piece.style.top = "40%";
+
+        piece.style.animationDelay = (Math.random()*0.1) + "s";
+
+        container.appendChild(piece);
+
+    }
+
+    setTimeout(function(){
+        container.remove();
+    }, 1300);
 
 }
 
@@ -657,6 +824,8 @@ function resetToEmptyState(){
 
     clearAnswerFieldFlash();
 
+    resetCombo();
+
     document.getElementById("info").innerHTML = "Nie wybrano pliku.";
 
     updateStats();
@@ -672,6 +841,8 @@ async function loadWords(text){
 
 
     words=[];
+
+    resetCombo();
 
 
     let lines=text.split(/\r?\n/);
@@ -834,6 +1005,8 @@ window.onAuthChangedReloadProgress = async function(){
             words.forEach(function(w){
                 w.score = 0;
             });
+
+            resetCombo();
 
         }
 
@@ -1113,18 +1286,26 @@ function nextWord(){
 	document.getElementById("direction").value;
 
 
+	let wordEl = document.getElementById("word");
+
 	if(direction=="en-pl"){
 
-		document.getElementById("word").innerHTML =
+		wordEl.innerHTML =
 		current.en;
 
 	}
 	else{
 
-		document.getElementById("word").innerHTML =
+		wordEl.innerHTML =
 		current.pl;
 
 	}
+
+	wordEl.classList.remove("word-bounce");
+
+	void wordEl.offsetWidth; // wymuszenie reflow, żeby animacja odpaliła się ponownie za każdym razem
+
+	wordEl.classList.add("word-bounce");
 
 
     document.getElementById("answer").value="";
@@ -1224,13 +1405,24 @@ function checkAnswer(){
 
 	if(answer==correctAnswer.toLowerCase()){
 
-		playCorrectSound();
+		comboCount++;
+
+		playCorrectSound(comboCount);
 
 		flashAnswerField("correct-flash");
 
         current.score = clampScore((current.score||0) + 1);
 
         lastAnswerCorrect = true;
+
+        updateComboDisplay();
+
+        if(comboCount % 10 === 0){
+            triggerConfettiBurst(true);
+        }
+        else if(comboCount % 5 === 0){
+            triggerConfettiBurst(false);
+        }
 
         document.getElementById("result").innerHTML=
         dikiLink + cambridgeLink;
@@ -1248,6 +1440,8 @@ function checkAnswer(){
         current.score = clampScore((current.score||0) - 1);
 
         lastAnswerCorrect = false;
+
+        resetCombo();
 
         document.getElementById("result").innerHTML=
         correctAnswer + dikiLink + cambridgeLink;
@@ -1287,6 +1481,19 @@ function overrideCorrect(){
         return;
 
     current.score = clampScore((current.score||0) + 2);
+
+    comboCount++;
+
+    playCorrectSound(comboCount);
+
+    updateComboDisplay();
+
+    if(comboCount % 10 === 0){
+        triggerConfettiBurst(true);
+    }
+    else if(comboCount % 5 === 0){
+        triggerConfettiBurst(false);
+    }
 
     updateStats();
 
