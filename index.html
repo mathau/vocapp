@@ -30,8 +30,16 @@ input {
     transition: background-color 0.3s ease;
 }
 
+#answer.no-transition {
+    transition: none;
+}
+
 #answer.correct-flash {
-    background-color: #8fe3a8;
+    background-color: #82c7a8;
+}
+
+#answer.wrong-flash {
+    background-color: #e98c8c;
 }
 
 #answerRow {
@@ -39,13 +47,6 @@ input {
     align-items: center;
     justify-content: center;
     gap: 8px;
-}
-
-.result-icon {
-    display: inline-block;
-    width: 28px;
-    font-size: 22px;
-    text-align: center;
 }
 
 .small-btn {
@@ -299,7 +300,6 @@ English → Polski
 
 
 <div id="answerRow">
-<span id="resultIconLeft" class="result-icon"></span>
 <input 
 id="answer"
 placeholder="Tłumaczenie"
@@ -309,7 +309,6 @@ autocapitalize="off"
 spellcheck="false"
 onkeydown="if(event.key==='Enter') handleEnter()"
 >
-<span id="resultIconRight" class="result-icon"></span>
 </div>
 
 
@@ -413,6 +412,69 @@ function playTone(freq, startTime, duration){
     osc.stop(startTime + duration + 0.05);
 
 }
+
+// ---- Dźwięk przy złej odpowiedzi ----
+// Stonowany, opadający dwutonowy sygnał - niższy i cichszy niż dźwięk
+// dobrej odpowiedzi, ale w tej samej, minimalistycznej stylistyce.
+function playWrongSound(){
+
+    try {
+
+        if(!audioCtx){
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        if(audioCtx.state === "suspended"){
+            audioCtx.resume();
+        }
+
+        let now = audioCtx.currentTime;
+
+        playTone(392.00, now, 0.35);        // G4
+        playTone(329.63, now + 0.11, 0.35); // E4 (opadające)
+
+    }
+    catch(error){
+
+        console.log(error);
+
+    }
+
+}
+
+
+// ---- Podświetlenie pola odpowiedzi ----
+// Kolor ma się pojawiać NATYCHMIAST (bez przejścia), a znikać PŁYNNIE.
+// Osiągamy to chwilowo wyłączając transition, dodając kolor, wymuszając
+// przeliczenie stylów (reflow), a potem z powrotem włączając transition.
+function flashAnswerField(className){
+
+    let el = document.getElementById("answer");
+
+    el.classList.remove("correct-flash", "wrong-flash");
+
+    el.classList.add("no-transition");
+
+    void el.offsetWidth; // wymuszenie reflow, żeby "no-transition" na pewno zadziałało
+
+    el.classList.add(className);
+
+    requestAnimationFrame(function(){
+        el.classList.remove("no-transition");
+    });
+
+}
+
+
+// Usuwa podświetlenie pola odpowiedzi - tym razem PŁYNNIE (transition już aktywne)
+function clearAnswerFieldFlash(){
+
+    let el = document.getElementById("answer");
+
+    el.classList.remove("correct-flash", "wrong-flash");
+
+}
+
 
 // ---- Panel admina ----
 // Zaloguj się raz, skopiuj swoje UID (widoczne obok statusu logowania)
@@ -589,15 +651,11 @@ function resetToEmptyState(){
 
     document.getElementById("result").innerHTML = "";
 
-    document.getElementById("resultIconLeft").textContent = "";
-
-    document.getElementById("resultIconRight").textContent = "";
-
     document.getElementById("overrideBtn").style.display = "none";
 
     document.getElementById("meaningEditBox").style.display = "none";
 
-    document.getElementById("answer").classList.remove("correct-flash");
+    clearAnswerFieldFlash();
 
     document.getElementById("info").innerHTML = "Nie wybrano pliku.";
 
@@ -1074,15 +1132,11 @@ function nextWord(){
 
     document.getElementById("result").innerHTML="";
 
-    document.getElementById("resultIconLeft").textContent = "";
-
-    document.getElementById("resultIconRight").textContent = "";
-
     document.getElementById("overrideBtn").style.display="none";
 
     document.getElementById("meaningEditBox").style.display="none";
 
-    document.getElementById("answer").classList.remove("correct-flash");
+    clearAnswerFieldFlash();
 
     lastAnswerCorrect = null;
 
@@ -1172,15 +1226,11 @@ function checkAnswer(){
 
 		playCorrectSound();
 
-		document.getElementById("answer").classList.add("correct-flash");
-		
+		flashAnswerField("correct-flash");
+
         current.score = clampScore((current.score||0) + 1);
 
         lastAnswerCorrect = true;
-
-        document.getElementById("resultIconLeft").textContent = "✅";
-
-        document.getElementById("resultIconRight").textContent = "✅";
 
         document.getElementById("result").innerHTML=
         dikiLink + cambridgeLink;
@@ -1191,14 +1241,13 @@ function checkAnswer(){
     }
     else{
 
+		playWrongSound();
+
+		flashAnswerField("wrong-flash");
 
         current.score = clampScore((current.score||0) - 1);
 
         lastAnswerCorrect = false;
-
-        document.getElementById("resultIconLeft").textContent = "❌";
-
-        document.getElementById("resultIconRight").textContent = "❌";
 
         document.getElementById("result").innerHTML=
         correctAnswer + dikiLink + cambridgeLink;
