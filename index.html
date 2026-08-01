@@ -117,6 +117,16 @@ button {
     background: #4caf82;
 }
 
+@keyframes barPulse {
+    0% { transform: scaleY(1); }
+    40% { transform: scaleY(1.7); }
+    100% { transform: scaleY(1); }
+}
+
+.bar-pulse {
+    animation: barPulse 0.35s ease;
+}
+
 #comboDisplay {
     display: none;
     font-size: 16px;
@@ -351,8 +361,6 @@ English → Polski
 
 <div id="progressBar"></div>
 
-<div id="comboDisplay"></div>
-
 <div id="word">
 -
 </div>
@@ -382,6 +390,8 @@ Sprawdź
 Pomiń
 </button>
 
+
+<div id="comboDisplay"></div>
 
 <div id="result"></div>
 
@@ -415,6 +425,8 @@ let csvHeaderLine = ""; // oryginalny nagłówek csv (do eksportu)
 let csvSeparator = ","; // wykryty separator (do eksportu)
 
 let comboCount = 0; // licznik kolejnych dobrych odpowiedzi w tej sesji (nie zapisywany do bazy)
+
+let comboBeforeWrongAnswer = 0; // combo sprzed błędnej odpowiedzi - do przywrócenia po "Mam rację"
 
 
 // ---- Dźwięk przy dobrej odpowiedzi ----
@@ -528,7 +540,7 @@ function updateComboDisplay(){
 
         let flame = (comboCount % 10 === 0) ? "🔥🔥" : "🔥";
 
-        el.textContent = flame + " Combo x" + comboCount + " " + flame;
+        el.textContent = "Combo x" + comboCount + " " + flame;
 
         el.style.display = "inline-block";
 
@@ -559,8 +571,25 @@ function resetCombo(){
 }
 
 
-// Krótki, niewielki "wybuch" konfetti - bez żadnych bibliotek, kilka
-// kolorowych elementów, które wylatują na boki i znikają.
+// Krótkie "pulsnięcie" całego paska postępu - widoczne niezależnie od tego,
+// jak małą (albo jak dużą, np. kilka tysięcy słówek) zmianę procentową
+// spowodowała ta jedna odpowiedź. Dzięki temu feedback działa tak samo
+// dla małej i dużej listy, nie tylko przez zmianę szerokości segmentów.
+function pulseProgressBar(){
+
+    let bar = document.getElementById("progressBar");
+
+    bar.classList.remove("bar-pulse");
+
+    void bar.offsetWidth; // wymuszenie reflow, żeby animacja odpaliła się ponownie
+
+    bar.classList.add("bar-pulse");
+
+}
+
+
+// Krótki, niewielki "wybuch" konfetti (czarno-białe, różne odcienie szarości) -
+// bez żadnych bibliotek, kilka elementów, które wylatują na boki i znikają.
 function triggerConfettiBurst(big){
 
     let container = document.createElement("div");
@@ -571,7 +600,7 @@ function triggerConfettiBurst(big){
 
     let count = big ? 40 : 18;
 
-    let colors = ["#82c7a8", "#ffd166", "#ef476f", "#118ab2", "#8ecae6"];
+    let colors = ["#000000", "#222222", "#444444", "#666666", "#999999"];
 
     for(let i=0; i<count; i++){
 
@@ -1417,6 +1446,8 @@ function checkAnswer(){
 
         updateComboDisplay();
 
+        pulseProgressBar();
+
         if(comboCount % 10 === 0){
             triggerConfettiBurst(true);
         }
@@ -1441,7 +1472,11 @@ function checkAnswer(){
 
         lastAnswerCorrect = false;
 
+        comboBeforeWrongAnswer = comboCount;
+
         resetCombo();
+
+        pulseProgressBar();
 
         document.getElementById("result").innerHTML=
         correctAnswer + dikiLink + cambridgeLink;
@@ -1482,11 +1517,15 @@ function overrideCorrect(){
 
     current.score = clampScore((current.score||0) + 2);
 
-    comboCount++;
+    // przywracamy combo tak, jakby ta odpowiedź od razu była dobra
+    // (a nie liczymy je od zera, mimo że chwilę wcześniej combo się zresetowało)
+    comboCount = comboBeforeWrongAnswer + 1;
 
     playCorrectSound(comboCount);
 
     updateComboDisplay();
+
+    pulseProgressBar();
 
     if(comboCount % 10 === 0){
         triggerConfettiBurst(true);
