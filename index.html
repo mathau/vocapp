@@ -107,7 +107,7 @@ async function loginGoogle(){
         );
 
         document.getElementById("loginStatus").innerHTML =
-        "Zalogowano: " + result.user.email;
+        "Konto: " + result.user.email;
 
         console.log(result.user);
 
@@ -143,7 +143,7 @@ onAuthStateChanged(auth, function(user){
     window.currentUser = user;
 
     document.getElementById("loginStatus").innerHTML =
-    user ? "Zalogowano: " + user.email : "Nie zalogowano";
+    user ? "Konto: " + user.email : "Nie zalogowano";
 
     // jeśli lista słówek jest już załadowana, doczytaj/odśwież postęp
     // (np. po odświeżeniu strony, gdy sesja jest zapamiętana)
@@ -172,7 +172,7 @@ Nie zalogowano
 
 <select id="csvList" onchange="loadSelectedCsv()">
 <option value="">
--- wybierz plik --
+- Wybierz plik -
 </option>
 </select>
 
@@ -302,7 +302,7 @@ function playTone(freq, startTime, duration){
 
     gain.gain.setValueAtTime(0, startTime);
 
-    gain.gain.linearRampToValueAtTime(0.3, startTime + 0.02); // łagodny atak
+    gain.gain.linearRampToValueAtTime(0.25, startTime + 0.02); // łagodny atak
 
     gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration); // miękkie wygaszenie
 
@@ -393,7 +393,7 @@ async function loadCsvFileList(){
 
         let select = document.getElementById("csvList");
 
-        select.innerHTML = '<option value="">-- wybierz plik --</option>';
+        select.innerHTML = '<option value="">- Wybierz plik -</option>';
 
         csvFiles.forEach(function(file){
 
@@ -409,8 +409,8 @@ async function loadCsvFileList(){
 
         document.getElementById("info").innerHTML =
         csvFiles.length > 0
-        ? "Znaleziono " + csvFiles.length + " plik(ów) CSV. Wybierz z listy."
-        : "Nie znaleziono plików CSV w folderze '" + CSV_FOLDER + "'.";
+        ? "Dostępne pliki do nauki: " + csvFiles.length + ". Wybierz z listy."
+        : "Brak dostępnych plików do nauki.";
 
     }
     catch(error){
