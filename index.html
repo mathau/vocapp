@@ -184,13 +184,21 @@ button {
     }
 }
 
-#mascot {
+#mascotWrap {
     position: fixed;
     bottom: 0;
-    right: 16px;
-    width: 90px;
+    left: 50%;
+    transform: translateX(-50%);
     pointer-events: none;
     z-index: 5;
+}
+
+#mascot {
+    display: block;
+    width: 160px;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    shape-rendering: crispEdges;
     animation: mascotIdle 2.6s ease-in-out infinite;
     transform-origin: bottom center;
 }
@@ -202,8 +210,7 @@ button {
 
 @media (max-width: 480px) {
     #mascot {
-        width: 64px;
-        right: 8px;
+        width: 110px;
     }
 }
 
@@ -337,53 +344,9 @@ onAuthStateChanged(auth, function(user){
 
 <body>
 
-<svg id="mascot" viewBox="0 0 200 170" xmlns="http://www.w3.org/2000/svg">
-
-  <!-- ogon - delikatnie machający (animacja SMIL, niezależna od bujania całości) -->
-  <g transform="translate(38,120)">
-    <path d="M 0 0 C -22 -6, -34 6, -38 22 C -30 14, -16 10, 0 12 Z" fill="#6bbf5e">
-      <animateTransform
-        attributeName="transform"
-        type="rotate"
-        values="-6 0 0; 6 0 0; -6 0 0"
-        dur="1.8s"
-        repeatCount="indefinite" />
-    </path>
-  </g>
-
-  <!-- tylna noga -->
-  <ellipse cx="70" cy="150" rx="14" ry="10" fill="#5aa64d"/>
-  <!-- przednia noga -->
-  <ellipse cx="130" cy="150" rx="14" ry="10" fill="#5aa64d"/>
-
-  <!-- ciało -->
-  <ellipse cx="100" cy="105" rx="55" ry="42" fill="#7ec850"/>
-
-  <!-- kolce na grzbiecie -->
-  <path d="M 60 68 L 68 50 L 76 68 Z" fill="#5aa64d"/>
-  <path d="M 82 60 L 90 40 L 98 60 Z" fill="#5aa64d"/>
-  <path d="M 104 58 L 112 38 L 120 58 Z" fill="#5aa64d"/>
-  <path d="M 126 62 L 134 44 L 142 62 Z" fill="#5aa64d"/>
-
-  <!-- brzuszek -->
-  <ellipse cx="100" cy="120" rx="34" ry="22" fill="#eaf7e0"/>
-
-  <!-- ramię -->
-  <ellipse cx="148" cy="112" rx="9" ry="14" fill="#7ec850" transform="rotate(20 148 112)"/>
-
-  <!-- głowa -->
-  <circle cx="158" cy="72" r="34" fill="#7ec850"/>
-
-  <!-- pyszczek -->
-  <ellipse cx="182" cy="82" rx="14" ry="10" fill="#7ec850"/>
-  <path d="M 172 88 Q 182 94, 194 86" stroke="#3f7a35" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-
-  <!-- oko -->
-  <circle cx="164" cy="62" r="7" fill="#ffffff"/>
-  <circle cx="166" cy="62" r="4" fill="#2b2b2b"/>
-  <circle cx="167.5" cy="60.5" r="1.2" fill="#ffffff"/>
-
-</svg>
+<div id="mascotWrap">
+<svg id="mascot" viewBox="0 0 192 160" xmlns="http://www.w3.org/2000/svg"></svg>
+</div>
 
 <h1>VocApp</h1>
 
@@ -473,6 +436,68 @@ Pomiń
 
 
 <script>
+
+
+// ---- Maskotka: pikselowy (8-bit) dinozaur, czarno-biały ----
+// Siatka 24x20 pikseli, zdefiniowana jako poziome odcinki wypełnienia
+// [wiersz, [[kolumna_od, kolumna_do], ...]] - łatwiej to tak edytować/czytać
+// niż dziesiątki pojedynczych <rect> wpisanych ręcznie w HTML.
+const DINO_PIXELS = [
+    [0,  [[17,18]]],
+    [1,  [[16,19]]],
+    [2,  [[15,21]]],
+    [3,  [[15,17],[19,21]]], // oko - "dziura" w kolumnie 18
+    [4,  [[14,21]]],
+    [5,  [[13,20]]],
+    [6,  [[12,18]]],
+    [7,  [[11,17]]],
+    [8,  [[10,17]]],
+    [9,  [[4,17]]],
+    [10, [[2,19]]],
+    [11, [[1,18]]],
+    [12, [[0,17]]],
+    [13, [[3,16],[17,18]]], // korpus + ramię
+    [14, [[4,15]]],
+    [15, [[4,7],[11,14]]],
+    [16, [[4,7],[11,14]]],
+    [17, [[4,7],[11,14]]],
+    [18, [[3,8],[10,15]]],
+    [19, [[3,8],[10,15]]]
+];
+
+function buildMascotSvg(){
+
+    let pixelSize = 8;
+
+    let svg = document.getElementById("mascot");
+
+    let rects = "";
+
+    DINO_PIXELS.forEach(function(rowData){
+
+        let row = rowData[0];
+
+        let segments = rowData[1];
+
+        segments.forEach(function(seg){
+
+            let x = seg[0] * pixelSize;
+
+            let y = row * pixelSize;
+
+            let w = (seg[1] - seg[0] + 1) * pixelSize;
+
+            rects += '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + pixelSize + '" fill="#111111"/>';
+
+        });
+
+    });
+
+    svg.innerHTML = rects;
+
+}
+
+buildMascotSvg();
 
 
 let words = [];
