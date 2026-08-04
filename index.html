@@ -329,11 +329,11 @@ Wyloguj
 
 <select id="csvList" onchange="loadSelectedCsv()">
 <option value="">
-- Wybierz plik -
+Wybierz listę do nauki
 </option>
 </select>
 
-<select id="direction" onchange="nextWord()">
+<select id="direction" onchange="nextWord()" style="display:none;">
 
 <option value="col2-col1">
 Wybierz listę słówek
@@ -441,6 +441,8 @@ function populateDirectionOptions(headerLine, separator){
     '<option value="col1-col2">' + lang1 + ' → ' + lang2 + '</option>';
 
     select.value = "col2-col1";
+
+    select.style.display = "inline-block";
 
 }
 
@@ -786,7 +788,7 @@ async function loadCsvFileList(){
 
         let select = document.getElementById("csvList");
 
-        select.innerHTML = '<option value="">- Wybierz plik -</option>';
+        select.innerHTML = '<option value="">Wybierz listę do nauki</option>';
 
         csvFiles.forEach(function(file){
 
@@ -860,7 +862,7 @@ window.addEventListener("DOMContentLoaded", loadCsvFileList);
 
 
 // Przywraca aplikację do stanu "zero" - gdy użytkownik wybierze z powrotem
-// pustą pozycję "- Wybierz plik -" w liście
+// pustą pozycję "Wybierz listę do nauki" w liście
 function resetToEmptyState(){
 
     if(autoAdvanceTimer){
@@ -882,6 +884,8 @@ function resetToEmptyState(){
 
     document.getElementById("direction").innerHTML =
     '<option value="col2-col1">Wybierz listę słówek</option>';
+
+    document.getElementById("direction").style.display = "none";
 
     document.getElementById("answer").value = "";
 
