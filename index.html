@@ -184,6 +184,29 @@ button {
     }
 }
 
+#mascot {
+    position: fixed;
+    bottom: 0;
+    right: 16px;
+    width: 90px;
+    pointer-events: none;
+    z-index: 5;
+    animation: mascotIdle 2.6s ease-in-out infinite;
+    transform-origin: bottom center;
+}
+
+@keyframes mascotIdle {
+    0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+    50% { transform: translateY(-5px) rotate(1.5deg); }
+}
+
+@media (max-width: 480px) {
+    #mascot {
+        width: 64px;
+        right: 8px;
+    }
+}
+
 </style>
 
 <script type="module">
@@ -313,6 +336,54 @@ onAuthStateChanged(auth, function(user){
 
 
 <body>
+
+<svg id="mascot" viewBox="0 0 200 170" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- ogon - delikatnie machający (animacja SMIL, niezależna od bujania całości) -->
+  <g transform="translate(38,120)">
+    <path d="M 0 0 C -22 -6, -34 6, -38 22 C -30 14, -16 10, 0 12 Z" fill="#6bbf5e">
+      <animateTransform
+        attributeName="transform"
+        type="rotate"
+        values="-6 0 0; 6 0 0; -6 0 0"
+        dur="1.8s"
+        repeatCount="indefinite" />
+    </path>
+  </g>
+
+  <!-- tylna noga -->
+  <ellipse cx="70" cy="150" rx="14" ry="10" fill="#5aa64d"/>
+  <!-- przednia noga -->
+  <ellipse cx="130" cy="150" rx="14" ry="10" fill="#5aa64d"/>
+
+  <!-- ciało -->
+  <ellipse cx="100" cy="105" rx="55" ry="42" fill="#7ec850"/>
+
+  <!-- kolce na grzbiecie -->
+  <path d="M 60 68 L 68 50 L 76 68 Z" fill="#5aa64d"/>
+  <path d="M 82 60 L 90 40 L 98 60 Z" fill="#5aa64d"/>
+  <path d="M 104 58 L 112 38 L 120 58 Z" fill="#5aa64d"/>
+  <path d="M 126 62 L 134 44 L 142 62 Z" fill="#5aa64d"/>
+
+  <!-- brzuszek -->
+  <ellipse cx="100" cy="120" rx="34" ry="22" fill="#eaf7e0"/>
+
+  <!-- ramię -->
+  <ellipse cx="148" cy="112" rx="9" ry="14" fill="#7ec850" transform="rotate(20 148 112)"/>
+
+  <!-- głowa -->
+  <circle cx="158" cy="72" r="34" fill="#7ec850"/>
+
+  <!-- pyszczek -->
+  <ellipse cx="182" cy="82" rx="14" ry="10" fill="#7ec850"/>
+  <path d="M 172 88 Q 182 94, 194 86" stroke="#3f7a35" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+  <!-- oko -->
+  <circle cx="164" cy="62" r="7" fill="#ffffff"/>
+  <circle cx="166" cy="62" r="4" fill="#2b2b2b"/>
+  <circle cx="167.5" cy="60.5" r="1.2" fill="#ffffff"/>
+
+</svg>
 
 <h1>VocApp</h1>
 
