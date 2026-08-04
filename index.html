@@ -335,12 +335,8 @@ Wyloguj
 
 <select id="direction" onchange="nextWord()">
 
-<option value="pl-en">
-Polski → English
-</option>
-
-<option value="en-pl">
-English → Polski
+<option value="col2-col1">
+Wybierz listę słówek
 </option>
 
 </select>
@@ -423,6 +419,30 @@ let currentListName = null; // nazwa aktualnie wybranego pliku csv
 let csvHeaderLine = ""; // oryginalny nagłówek csv (do eksportu)
 
 let csvSeparator = ","; // wykryty separator (do eksportu)
+
+
+// Odczytuje nazwy języków z pierwszego wiersza csv (nagłówka) i wypełnia
+// nimi listę wyboru kierunku tłumaczenia. Kolumna 1 = current.en,
+// kolumna 2 = current.pl (te nazwy wewnętrzne zostają bez zmian - to
+// zwykłe "kolumna 1 / kolumna 2", niezależnie od faktycznych języków).
+// Domyślnie ustawiany jest kierunek: kolumna 2 -> kolumna 1.
+function populateDirectionOptions(headerLine, separator){
+
+    let parts = headerLine.split(separator);
+
+    let lang1 = (parts[0] || "Kolumna 1").replace(/^\uFEFF/, "").replaceAll('"',"").trim();
+
+    let lang2 = (parts[1] || "Kolumna 2").replace(/^\uFEFF/, "").replaceAll('"',"").trim();
+
+    let select = document.getElementById("direction");
+
+    select.innerHTML =
+    '<option value="col2-col1">' + lang2 + ' → ' + lang1 + '</option>' +
+    '<option value="col1-col2">' + lang1 + ' → ' + lang2 + '</option>';
+
+    select.value = "col2-col1";
+
+}
 
 let comboCount = 0; // licznik kolejnych dobrych odpowiedzi w tej sesji (nie zapisywany do bazy)
 
@@ -860,6 +880,9 @@ function resetToEmptyState(){
 
     document.getElementById("word").innerHTML = "-";
 
+    document.getElementById("direction").innerHTML =
+    '<option value="col2-col1">Wybierz listę słówek</option>';
+
     document.getElementById("answer").value = "";
 
     document.getElementById("result").innerHTML = "";
@@ -905,6 +928,9 @@ async function loadWords(text){
     }
 
     csvSeparator = separator;
+
+
+    populateDirectionOptions(csvHeaderLine, separator);
 
 
 
@@ -1334,7 +1360,7 @@ function nextWord(){
 
 	let wordEl = document.getElementById("word");
 
-	if(direction=="en-pl"){
+	if(direction=="col1-col2"){
 
 		wordEl.innerHTML =
 		current.en;
@@ -1416,7 +1442,7 @@ function checkAnswer(){
 	let correctAnswer;
 
 
-	if(direction=="en-pl"){
+	if(direction=="col1-col2"){
 
 		correctAnswer = current.pl;
 
