@@ -345,7 +345,7 @@ onAuthStateChanged(auth, function(user){
 <body>
 
 <div id="mascotWrap">
-<svg id="mascot" viewBox="0 0 192 160" xmlns="http://www.w3.org/2000/svg"></svg>
+<img id="mascot" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAXCAYAAAAcP/9qAAABL0lEQVR4nO1VK47DMBB9Xu0NCsOLWqm3aNmSKGwvEhBQkIuURSVlWdgbrJQg88DlZbPEtux4nNhJVdQnDbBnPG9+toE3AFKSqkvCx9jx0JQYmlKTxOqeAmqrnIam5LKb0rG+RmLw+ZRQA6R/vz/OxuZwJAAC8EsNANjvtsiK2jiwBPvdNpZYbA5HPOQdD3n3lMGMVS/XQmRFTUNTeuRB4qyohQqAuLXC4iGb6rHpR2CdVJWul85ajPQU41A7Sei3nhnD5w1XW+XIitoertWk42ydCBSorXJnwyZYQgr42XLEwMzALJl2jpi7x0Ib0eXmBMiRdr1kSzmHyZdLfH95kXa9xOl8NUGczlfnjG6VbZNKzLVhzjb6XrNPZixiShyyWUX8StjfW+hrjLF543X4B4zXiqcjPx44AAAAAElFTkSuQmCC" alt="Piesek - maskotka VocApp">
 </div>
 
 <h1>VocApp</h1>
@@ -436,68 +436,6 @@ Pomiń
 
 
 <script>
-
-
-// ---- Maskotka: pikselowy (8-bit) dinozaur, czarno-biały ----
-// Siatka 24x20 pikseli, zdefiniowana jako poziome odcinki wypełnienia
-// [wiersz, [[kolumna_od, kolumna_do], ...]] - łatwiej to tak edytować/czytać
-// niż dziesiątki pojedynczych <rect> wpisanych ręcznie w HTML.
-const DINO_PIXELS = [
-    [0,  [[17,18]]],
-    [1,  [[16,19]]],
-    [2,  [[15,21]]],
-    [3,  [[15,17],[19,21]]], // oko - "dziura" w kolumnie 18
-    [4,  [[14,21]]],
-    [5,  [[13,20]]],
-    [6,  [[12,18]]],
-    [7,  [[11,17]]],
-    [8,  [[10,17]]],
-    [9,  [[4,17]]],
-    [10, [[2,19]]],
-    [11, [[1,18]]],
-    [12, [[0,17]]],
-    [13, [[3,16],[17,18]]], // korpus + ramię
-    [14, [[4,15]]],
-    [15, [[4,7],[11,14]]],
-    [16, [[4,7],[11,14]]],
-    [17, [[4,7],[11,14]]],
-    [18, [[3,8],[10,15]]],
-    [19, [[3,8],[10,15]]]
-];
-
-function buildMascotSvg(){
-
-    let pixelSize = 8;
-
-    let svg = document.getElementById("mascot");
-
-    let rects = "";
-
-    DINO_PIXELS.forEach(function(rowData){
-
-        let row = rowData[0];
-
-        let segments = rowData[1];
-
-        segments.forEach(function(seg){
-
-            let x = seg[0] * pixelSize;
-
-            let y = row * pixelSize;
-
-            let w = (seg[1] - seg[0] + 1) * pixelSize;
-
-            rects += '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + pixelSize + '" fill="#111111"/>';
-
-        });
-
-    });
-
-    svg.innerHTML = rects;
-
-}
-
-buildMascotSvg();
 
 
 let words = [];
