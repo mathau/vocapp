@@ -31,6 +31,7 @@ margin-bottom: 20px;
 
 
 body {
+
 	font-family: 'Segoe UI', Roboto, Arial, sans-serif;
     text-align: center;
 	align-items: center;
@@ -53,11 +54,9 @@ margin: 0 auto;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: 12px;
 	width: 100%;
 	max-width: 500px;
 	position: relative;
-margin-bottom: -15px;
 }
 
 .input-wrapper {
@@ -73,14 +72,14 @@ margin-bottom: -15px;
 	font-weight: 400;
 	color: #1a1a1a;
 	background: white;
-	border: 2px solid #dadce0;
+	border: 1px solid #dadce0;
 	border-radius: 40px;
 	outline: none;
 	transition: all 0.3s ease;
 	text-align: center;
 	letter-spacing: 0.5px;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-	transition: background-color 0.3s ease;
+	
 }
 
 #answer::placeholder {
@@ -88,8 +87,8 @@ margin-bottom: -15px;
 }
 
 #answer:hover {
-	border-color: #bdc1c6;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+	box-shadow: 0 4px 40px rgba(26, 115, 232, 0.15);
+	border-color: rgba(26, 115, 232, 0.3);
 }
 
 #answer:focus {
@@ -113,18 +112,22 @@ margin-bottom: -15px;
 	white-space: nowrap;
 }
 
+#answer:hover + .floating-label {
+    color: rgba(26, 115, 232, 0.6);
+}
+
 /* Gdy pole ma focus - tekst na górze, na środku */
 #answer:focus + .floating-label {
 	top: 0;
-	transform: translate(-50%, -100%) scale(0.75);
-	color: #1a73e8;
+	transform: translate(-50%, -120%) scale(0.75);
+	color: rgba(26, 115, 232, 0.4);
 }
 
 /* Gdy jest wpisany tekst - tekst na górze, na środku */
 #answer:not(:placeholder-shown) + .floating-label {
 	top: 0;
-	transform: translate(-50%, -100%) scale(0.75);
-	color: #1a73e8;
+	transform: translate(-50%, -120%) scale(0.75);
+	color: rgba(26, 115, 232, 0.4);
 }
 
 #answer.no-transition {
@@ -406,7 +409,7 @@ margin-bottom: 10px;
     font-weight: 500;
     color: #3c4043;
     background: white;
-    border: 2px solid #dadce0;
+    border: 1px solid #dadce0;
     border-radius: 40px;
     cursor: pointer;
     transition: all 0.1s ease;
