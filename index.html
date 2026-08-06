@@ -32,12 +32,9 @@
 body {
 	font-family: 'Segoe UI', Roboto, Arial, sans-serif;
     text-align: center;
+	align-items: center;
     margin-top: 40px;
     background-color: #ffffff;
-	display: flex;
-	align-items: center;
-    justify-content: center;
-    gap: 12px;
 }
 
 #word {
@@ -487,6 +484,16 @@ button {
 	transform: scale(0.95);
 }
 
+
+.button-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	min-height: 100vh; /* Wysokość całego ekranu */
+	width: 100%;
+}
+
 </style>
 
 <script type="module">
@@ -692,15 +699,17 @@ Wybierz listę słówek
 
 <br>
 
-<button onclick="handleEnter()" class="check-btn">
-Sprawdź
-</button>
 
+<div class="button-container">
+	<button onclick="handleEnter()" class="check-btn">
+	Sprawdź
+	</button>
 
-<button onclick="nextWord()" class="skip-btn">
-<span class="icon">→</span>
-Pomiń
-</button>
+	<button onclick="nextWord()" class="skip-btn">
+	<span class="icon">→</span>
+	Pomiń
+	</button>
+</div>
 
 
 <div id="comboDisplay"></div>
