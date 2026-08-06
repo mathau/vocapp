@@ -12,7 +12,7 @@
 	font-family: 'Segoe UI', Roboto, Arial, sans-serif;
 	font-size: 36px;
 	font-weight: 800;
-	color: #1a1a1a;
+	color: #4a4a4a;
 	text-decoration: none;
 	letter-spacing: -0.5px;
 	transition: all 0.7s ease;
@@ -40,13 +40,32 @@ body {
 
 #word {
     font-size: 25px;
-    margin: 30px;
+    margin: 50px;
 }
 
 input {
     font-size: 15px;
     padding: 10px;
 }
+
+#answer {
+    font-size: 19px;
+    transition: background-color 0.3s ease;
+}
+
+#answer.no-transition {
+    transition: none;
+}
+
+#answer.correct-flash {
+    background-color: #82c7a8;
+}
+
+#answer.wrong-flash {
+    background-color: #e98c8c;
+}
+
+
 
 #answerRow {
 margin: 0 auto;
@@ -65,9 +84,7 @@ margin-bottom: -15px;
 	position: relative;
 }
 
-
-
-#answer {
+#answerInput {
 	width: 100%;
 	padding: 18px 20px 10px 20px;
 	font-family: 'Segoe UI', Roboto, Arial, sans-serif;
@@ -82,19 +99,18 @@ margin-bottom: -15px;
 	text-align: center;
 	letter-spacing: 0.5px;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-	transition: background-color 0.3s ease;
 }
 
-#answer::placeholder {
+#answerInput::placeholder {
 	color: transparent;
 }
 
-#answer:hover {
+#answerInput:hover {
 	border-color: #bdc1c6;
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
-#answer:focus {
+#answerInput:focus {
 	border-color: #1a73e8;
 	box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.1), 0 4px 12px rgba(0, 0, 0, 0.06);
 }
@@ -110,40 +126,25 @@ margin-bottom: -15px;
 	color: #9aa0a6;
 	pointer-events: none;
 	transition: all 0.3s ease;
-	background: white;
+	
 	padding: 0 8px;
 	white-space: nowrap;
 }
 
 /* Gdy pole ma focus - tekst na górze, na środku */
-#answer:focus + .floating-label {
-	left: 50%;
-	top: 0;
-	transform: translate(-50%, -50%) scale(0.85);
+#answerInput:focus + .floating-label {
+	top: -14;
+	transform: translate(-50%, -50%) scale(0.75);
 	color: #1a73e8;
-	font-weight: 500;
 }
 
 /* Gdy jest wpisany tekst - tekst na górze, na środku */
-#answer:not(:placeholder-shown) + .floating-label {
-	left: 50%;
-	top: 0;
-	transform: translate(-50%, -50%) scale(0.85);
+#answerInput:not(:placeholder-shown) + .floating-label {
+	top: -14;
+	transform: translate(-50%, -50%) scale(0.75);
 	color: #1a73e8;
-	font-weight: 500;
 }
 
-#answer.no-transition {
-    transition: none;
-}
-
-#answer.correct-flash {
-    background-color: #82c7a8;
-}
-
-#answer.wrong-flash {
-    background-color: #e98c8c;
-}
 
 
 .small-btn {
@@ -283,7 +284,6 @@ margin-bottom: 50px;
     }
 }
 
-
   .google-btn {
 margin: 0 auto;
     display: flex;
@@ -293,8 +293,8 @@ margin: 0 auto;
     background: white;
     color: #3c4043;
     font-family: 'Segoe UI', Roboto, sans-serif;
-    font-size: 16px;
-    padding: 8px 24px;
+    font-size: 14px;
+    padding: 6px 24px;
     border: 1px solid #dadce0;
 border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 40px;
@@ -312,8 +312,8 @@ margin-bottom: 20px;
     transform: translateY(0);
   }
   .google-icon {
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
   }
 
 
@@ -343,7 +343,7 @@ margin-bottom: 10px;
 
 .custom-select:hover {
 	box-shadow: 0 8px 40px rgba(26, 115, 232, 0.15);
-	transform: translateY(-2px);
+	transform: translateY(0px);
 	border-color: rgba(26, 115, 232, 0.3);
 }
 
