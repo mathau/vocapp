@@ -30,10 +30,14 @@
 
 
 body {
-    font-family: Arial;
+	font-family: 'Segoe UI', Roboto, Arial, sans-serif;
     text-align: center;
     margin-top: 40px;
     background-color: #ffffff;
+	display: flex;
+	align-items: center;
+    justify-content: center;
+    gap: 12px;
 }
 
 #word {
@@ -343,7 +347,7 @@ button {
 }
 
 
-.custom-select-glass {
+.custom-select {
 	width: 380px;
 	padding: 14px 24px;
 	font-family: 'Segoe UI', Roboto, Arial, sans-serif;
@@ -366,24 +370,24 @@ button {
 	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
 }
 
-.custom-select-glass:hover {
+.custom-select:hover {
 	box-shadow: 0 8px 40px rgba(26, 115, 232, 0.15);
 	transform: translateY(-2px);
 	border-color: rgba(26, 115, 232, 0.3);
 }
 
-.custom-select-glass:focus {
+.custom-select:focus {
 	outline: none;
 	border-color: #1a73e8;
 	box-shadow: 0 8px 40px rgba(26, 115, 232, 0.2), 0 0 0 4px rgba(26, 115, 232, 0.1);
 }
 
-.custom-select-glass option {
+.custom-select option {
 	background: white;
 	padding: 12px;
 }
 
-.custom-select-glass option:first-child {
+.custom-select option:first-child {
 	color: #9aa0a6;
 }
 
