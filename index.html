@@ -213,36 +213,35 @@ button {
         width: 110px;
     }
 }
-	
+
 .google-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    background: white;
-    color: #3c4043;
-    font-family: 'Segoe UI', Roboto, sans-serif;
-    font-size: 16px;
-    font-weight: 0;
-    padding: 8px 24px;
-    border: 1px solid #dadce0;
-    border-radius: 40px;
-    cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: all 0.2s ease;
-  }
-  .google-btn:hover {
-    background: #f8f9fa;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    transform: translateY(-2px);
-  }
-  .google-btn:active {
-    transform: translateY(0);
-  }
-  .google-icon {
-    width: 20px;
-    height: 20px;
-  }
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	background: white;
+	color: #3c4043;
+	font-family: 'Segoe UI', Roboto, sans-serif;
+	font-size: 16px;
+	padding: 8px 24px;
+	border: 1px solid #dadce0;
+	border-radius: 40px;
+	cursor: pointer;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+	transition: all 0.2s ease;
+}
+.google-btn:hover {
+	background: #f8f9fa;
+	box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+	transform: translateY(-2px);
+}
+.google-btn:active {
+	transform: translateY(0);
+}
+.google-icon {
+	width: 20px;
+	height: 20px;
+}
 
 </style>
 
@@ -381,8 +380,8 @@ onAuthStateChanged(auth, function(user){
 <h1>VocApp</h1>
 
 <button id="loginBtn" onclick="loginGoogle()" class="google-btn">
-  <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" class="google-icon">
-  Zaloguj się przez Google
+<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" class="google-icon">
+Zaloguj się przez Google
 </button>
 
 <div id="accountRow">
