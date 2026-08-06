@@ -67,7 +67,7 @@ margin-bottom: -15px;
 
 #answer {
 	width: 100%;
-	padding: 18px 20px 10px 20px;
+	padding: 16px 20px 16px 20px;
 	font-family: 'Segoe UI', Roboto, Arial, sans-serif;
 	font-size: 22px;
 	font-weight: 400;
@@ -115,15 +115,15 @@ margin-bottom: -15px;
 
 /* Gdy pole ma focus - tekst na górze, na środku */
 #answer:focus + .floating-label {
-	top: -14;
-	transform: translate(-50%, -50%) scale(0.75);
+	top: 0;
+	transform: translate(-50%, -100%) scale(0.75);
 	color: #1a73e8;
 }
 
 /* Gdy jest wpisany tekst - tekst na górze, na środku */
 #answer:not(:placeholder-shown) + .floating-label {
-	top: -14;
-	transform: translate(-50%, -50%) scale(0.75);
+	top: 0;
+	transform: translate(-50%, -100%) scale(0.75);
 	color: #1a73e8;
 }
 
