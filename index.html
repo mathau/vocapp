@@ -48,25 +48,6 @@ input {
     padding: 10px;
 }
 
-#answer {
-    font-size: 19px;
-    transition: background-color 0.3s ease;
-}
-
-#answer.no-transition {
-    transition: none;
-}
-
-#answer.correct-flash {
-    background-color: #82c7a8;
-}
-
-#answer.wrong-flash {
-    background-color: #e98c8c;
-}
-
-
-
 #answerRow {
 margin: 0 auto;
 	display: flex;
@@ -84,7 +65,9 @@ margin-bottom: -15px;
 	position: relative;
 }
 
-#answerInput {
+
+
+#answer {
 	width: 100%;
 	padding: 18px 20px 10px 20px;
 	font-family: 'Segoe UI', Roboto, Arial, sans-serif;
@@ -99,18 +82,19 @@ margin-bottom: -15px;
 	text-align: center;
 	letter-spacing: 0.5px;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+	transition: background-color 0.3s ease;
 }
 
-#answerInput::placeholder {
+#answer::placeholder {
 	color: transparent;
 }
 
-#answerInput:hover {
+#answer:hover {
 	border-color: #bdc1c6;
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
-#answerInput:focus {
+#answer:focus {
 	border-color: #1a73e8;
 	box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.1), 0 4px 12px rgba(0, 0, 0, 0.06);
 }
@@ -132,7 +116,7 @@ margin-bottom: -15px;
 }
 
 /* Gdy pole ma focus - tekst na górze, na środku */
-#answerInput:focus + .floating-label {
+#answer:focus + .floating-label {
 	left: 50%;
 	top: 0;
 	transform: translate(-50%, -50%) scale(0.85);
@@ -141,7 +125,7 @@ margin-bottom: -15px;
 }
 
 /* Gdy jest wpisany tekst - tekst na górze, na środku */
-#answerInput:not(:placeholder-shown) + .floating-label {
+#answer:not(:placeholder-shown) + .floating-label {
 	left: 50%;
 	top: 0;
 	transform: translate(-50%, -50%) scale(0.85);
@@ -149,6 +133,17 @@ margin-bottom: -15px;
 	font-weight: 500;
 }
 
+#answer.no-transition {
+    transition: none;
+}
+
+#answer.correct-flash {
+    background-color: #82c7a8;
+}
+
+#answer.wrong-flash {
+    background-color: #e98c8c;
+}
 
 
 .small-btn {
@@ -285,36 +280,6 @@ margin-bottom: 50px;
     100% {
         transform: translate(var(--dx), var(--dy)) rotate(360deg);
         opacity: 0;
-    }
-}
-
-#mascotWrap {
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    pointer-events: none;
-    z-index: 5;
-}
-
-#mascot {
-    display: block;
-    width: 160px;
-    image-rendering: pixelated;
-    image-rendering: crisp-edges;
-    shape-rendering: crispEdges;
-    animation: mascotIdle 2.6s ease-in-out infinite;
-    transform-origin: bottom center;
-}
-
-@keyframes mascotIdle {
-    0%, 100% { transform: translateY(0) rotate(-1.5deg); }
-    50% { transform: translateY(-5px) rotate(1.5deg); }
-}
-
-@media (max-width: 480px) {
-    #mascot {
-        width: 110px;
     }
 }
 
@@ -632,11 +597,6 @@ onAuthStateChanged(auth, function(user){
 
 <body>
 
-<div id="mascotWrap">
-<img id="mascot" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAXCAYAAAAcP/9qAAABL0lEQVR4nO1VK47DMBB9Xu0NCsOLWqm3aNmSKGwvEhBQkIuURSVlWdgbrJQg88DlZbPEtux4nNhJVdQnDbBnPG9+toE3AFKSqkvCx9jx0JQYmlKTxOqeAmqrnIam5LKb0rG+RmLw+ZRQA6R/vz/OxuZwJAAC8EsNANjvtsiK2jiwBPvdNpZYbA5HPOQdD3n3lMGMVS/XQmRFTUNTeuRB4qyohQqAuLXC4iGb6rHpR2CdVJWul85ajPQU41A7Sei3nhnD5w1XW+XIitoertWk42ydCBSorXJnwyZYQgr42XLEwMzALJl2jpi7x0Ib0eXmBMiRdr1kSzmHyZdLfH95kXa9xOl8NUGczlfnjG6VbZNKzLVhzjb6XrNPZixiShyyWUX8StjfW+hrjLF543X4B4zXiqcjPx44AAAAAElFTkSuQmCC" alt="Piesek - maskotka VocApp">
-</div>
-
-
 <header style="text-align: center; padding: 30px 0 20px 0;">
 	<a href="#" class="logo">
 		Voc<span>App</span>
@@ -692,7 +652,7 @@ Wybierz listę słówek
 <div id="answerRow">
   <div class="input-wrapper">
     <input 
-      id="answerInput"
+      id="answer"
       placeholder=" "
       autocomplete="off"
       autocorrect="off"
@@ -700,7 +660,7 @@ Wybierz listę słówek
       spellcheck="false"
       onkeydown="if(event.key==='Enter') handleEnter()"
     >
-    <label class="floating-label" for="answerInput">Tłumaczenie</label>
+    <label class="floating-label" for="answer">Tłumaczenie</label>
   </div>
 </div>
 
