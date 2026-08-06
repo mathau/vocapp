@@ -289,6 +289,102 @@ button {
 	color: #9aa0a6;
 }
 
+
+.logout-btn {
+	padding: 8px 16px;
+	font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+	font-size: 14px;
+	font-weight: 500;
+	color: #5f6368;
+	background: transparent;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	position: relative;
+}
+
+.logout-btn::after {
+	content: '';
+	position: absolute;
+	bottom: 4px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 0;
+	height: 2px;
+	background: #d93025;
+	transition: width 0.3s ease;
+}
+
+.logout-btn:hover {
+	color: #d93025;
+}
+
+.logout-btn:hover::after {
+	width: 80%;
+}
+
+.logout-btn:active {
+	transform: scale(0.95);
+}
+
+
+.check-btn {
+	display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 8px 32px;
+    font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: #3c4043;
+    background: white;
+    border: 2px solid #dadce0;
+    border-radius: 40px;
+    cursor: pointer;
+    transition: all 0.1s ease;
+}
+
+.check-btn:hover {
+	border-color: #1a73e8;
+    background: #f8f9fa;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(26, 115, 232, 0.1);
+}
+
+.check-btn:active {
+	transform: scale(0.95);
+}
+
+
+.skip-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	padding: 8px 32px;
+	font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+	font-size: 16px;
+	font-weight: 500;
+	color: #5f6368;
+	background: #e8eaed;
+	border: none;
+	border-radius: 40px;
+	cursor: pointer;
+	transition: all 0.1s ease;
+}
+
+.skip-btn:hover {
+	background: #d2d5d8;
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.skip-btn:active {
+	transform: scale(0.95);
+}
+
 </style>
 
 <script type="module">
@@ -432,7 +528,7 @@ Zaloguj się przez Google
 
 <div id="accountRow">
 <span id="loginStatus"></span>
-<button id="logoutBtn" class="small-btn" style="display:none;" onclick="logoutGoogle()">
+<button id="logoutBtn" class="logout-btn" style="display:none;" onclick="logoutGoogle()">
 Wyloguj
 </button>
 </div>
@@ -485,12 +581,13 @@ onkeydown="if(event.key==='Enter') handleEnter()"
 
 <br>
 
-<button onclick="handleEnter()">
+<button onclick="handleEnter()" class="check-btn">
 Sprawdź
 </button>
 
 
-<button onclick="nextWord()">
+<button onclick="nextWord()" class="skip-btn">
+<span class="icon">→</span>
 Pomiń
 </button>
 
