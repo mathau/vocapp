@@ -8,6 +8,10 @@
 
 <style>
 
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 .logo {
 	font-family: 'Segoe UI', Roboto, Arial, sans-serif;
 	font-size: 36px;
@@ -31,7 +35,6 @@ margin-bottom: 20px;
 
 
 body {
-margin: 0;
 	font-family: 'Segoe UI', Roboto, Arial, sans-serif;
     text-align: center;
 	align-items: center;
@@ -64,7 +67,7 @@ margin: 0 auto;
 }
 
 #answer {
-
+	box-sizing: border-box;
 	width: 100%;
 	padding: 16px 20px 16px 20px;
 	font-family: 'Segoe UI', Roboto, Arial, sans-serif;
