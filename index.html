@@ -17,6 +17,7 @@
 	letter-spacing: -0.5px;
 	transition: all 0.7s ease;
 	display: inline-block;
+margin-bottom: 20px;
 }
 
 .logo:hover {
@@ -67,6 +68,7 @@ input {
 
 
 #answerRow {
+margin: 0 auto;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -74,6 +76,7 @@ input {
 	width: 100%;
 	max-width: 500px;
 	position: relative;
+margin-bottom: -15px;
 }
 
 .input-wrapper {
@@ -156,6 +159,7 @@ input {
 
 #accountRow {
     margin: 10px;
+margin-bottom: 20px;
 }
 
 #loginStatus {
@@ -197,6 +201,7 @@ button {
     border-radius: 7px;
     overflow: hidden;
     background: #eee;
+margin-bottom: 50px;
 }
 
 #progressBar div {
@@ -314,34 +319,37 @@ button {
 }
 
 
-.google-btn {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 12px;
-	background: white;
-	color: #3c4043;
-	font-family: 'Segoe UI', Roboto, sans-serif;
-	font-size: 16px;
-	padding: 8px 24px;
-	border: 1px solid #dadce0;
-	border-radius: 40px;
-	cursor: pointer;
-	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-	transition: all 0.2s ease;
-}
-.google-btn:hover {
-	background: #f8f9fa;
-	box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-	transform: translateY(-2px);
-}
-.google-btn:active {
-	transform: translateY(0);
-}
-.google-icon {
-	width: 20px;
-	height: 20px;
-}
+  .google-btn {
+margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: white;
+    color: #3c4043;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    font-size: 16px;
+    padding: 8px 24px;
+    border: 1px solid #dadce0;
+border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 40px;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
+margin-bottom: 20px;
+  }
+  .google-btn:hover {
+    background: #f8f9fa;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+  }
+  .google-btn:active {
+    transform: translateY(0);
+  }
+  .google-icon {
+    width: 20px;
+    height: 20px;
+  }
 
 
 .custom-select {
@@ -354,7 +362,7 @@ button {
 	background: rgba(255, 255, 255, 0.7);
 	backdrop-filter: blur(10px);
 	-webkit-backdrop-filter: blur(10px);
-	border: 1px solid rgba(255, 255, 255, 0.3);
+border: 1px solid #dadce0;
 	border-radius: 40px;
 	cursor: pointer;
 	appearance: none;
@@ -365,6 +373,7 @@ button {
 	padding-right: 46px;
 	transition: all 0.3s ease;
 	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+margin-bottom: 10px;
 }
 
 .custom-select:hover {
@@ -490,7 +499,6 @@ button {
 	align-items: center;
 	justify-content: center;
 	gap: 12px;
-	min-height: 100vh; /* Wysokość całego ekranu */
 	width: 100%;
 }
 
