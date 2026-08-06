@@ -48,25 +48,6 @@ input {
     padding: 10px;
 }
 
-#answer {
-    font-size: 19px;
-    transition: background-color 0.3s ease;
-}
-
-#answer.no-transition {
-    transition: none;
-}
-
-#answer.correct-flash {
-    background-color: #82c7a8;
-}
-
-#answer.wrong-flash {
-    background-color: #e98c8c;
-}
-
-
-
 #answerRow {
 margin: 0 auto;
 	display: flex;
@@ -84,7 +65,7 @@ margin-bottom: -15px;
 	position: relative;
 }
 
-#answerInput {
+#answer {
 	width: 100%;
 	padding: 18px 20px 10px 20px;
 	font-family: 'Segoe UI', Roboto, Arial, sans-serif;
@@ -99,18 +80,19 @@ margin-bottom: -15px;
 	text-align: center;
 	letter-spacing: 0.5px;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+	transition: background-color 0.3s ease;
 }
 
-#answerInput::placeholder {
+#answer::placeholder {
 	color: transparent;
 }
 
-#answerInput:hover {
+#answer:hover {
 	border-color: #bdc1c6;
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
-#answerInput:focus {
+#answer:focus {
 	border-color: #1a73e8;
 	box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.1), 0 4px 12px rgba(0, 0, 0, 0.06);
 }
@@ -132,19 +114,30 @@ margin-bottom: -15px;
 }
 
 /* Gdy pole ma focus - tekst na górze, na środku */
-#answerInput:focus + .floating-label {
+#answer:focus + .floating-label {
 	top: -14;
 	transform: translate(-50%, -50%) scale(0.75);
 	color: #1a73e8;
 }
 
 /* Gdy jest wpisany tekst - tekst na górze, na środku */
-#answerInput:not(:placeholder-shown) + .floating-label {
+#answer:not(:placeholder-shown) + .floating-label {
 	top: -14;
 	transform: translate(-50%, -50%) scale(0.75);
 	color: #1a73e8;
 }
 
+#answer.no-transition {
+    transition: none;
+}
+
+#answer.correct-flash {
+    background-color: #82c7a8;
+}
+
+#answer.wrong-flash {
+    background-color: #e98c8c;
+}
 
 
 .small-btn {
