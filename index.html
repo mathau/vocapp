@@ -14,14 +14,15 @@
 
 .logo {
 	font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-	font-size: 36px;
+	font-size: 38px;
 	font-weight: 800;
-	color: #4a4a4a;
+	color: #1a1a1a;
 	text-decoration: none;
 	letter-spacing: -0.5px;
 	transition: all 0.7s ease;
 	display: inline-block;
-margin-bottom: 20px;
+    margin-bottom: 20px;
+    margin: 5px auto 10px auto;
 }
 
 .logo:hover {
@@ -38,13 +39,11 @@ body {
 	font-family: 'Segoe UI', Roboto, Arial, sans-serif;
     text-align: center;
 	align-items: center;
-    margin-top: 40px;
-    background-color: #ffffff;
+    background-color: #f1f3f5;
 }
 
 #word {
-    font-size: 25px;
-    margin: 50px;
+    font-size: 22px;
 }
 
 input {
@@ -53,7 +52,7 @@ input {
 }
 
 #answerRow {
-margin: 0 auto;
+    margin: 0 auto;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -76,11 +75,12 @@ margin: 0 auto;
 	color: #1a1a1a;
 	background: white;
 	border: 1px solid #dadce0;
-	border-radius: 40px;
 	outline: none;
 	transition: all 0.3s ease;
 	text-align: center;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border-bottom-left-radius: 40px;
+    border-bottom-right-radius: 40px;
 	
 }
 
@@ -119,17 +119,24 @@ margin: 0 auto;
 }
 
 /* Gdy pole ma focus - tekst na górze, na środku */
-#answer:focus + .floating-label {
+/* #answer:focus + .floating-label {
 	top: 0;
 	transform: translate(-50%, -120%) scale(0.75);
 	color: rgba(26, 115, 232, 0.4);
+} */
+#answer:focus + .floating-label {
+
+	color: rgba(98, 154, 228, 0.4);
 }
 
 /* Gdy jest wpisany tekst - tekst na górze, na środku */
-#answer:not(:placeholder-shown) + .floating-label {
+/* #answer:not(:placeholder-shown) + .floating-label {
 	top: 0;
 	transform: translate(-50%, -120%) scale(0.75);
 	color: rgba(26, 115, 232, 0.4);
+} */
+#answer:not(:placeholder-shown) + .floating-label {
+	display: none;
 }
 
 #answer.no-transition {
@@ -177,25 +184,57 @@ button {
     margin: 20px;
 }
 
-#stats {
-    font-size: 14px;
-    color: #444;
-    margin: 15px;
+#wordContainer {
+    width: 90%;
+    max-width: 500px;
+    margin: 20px auto 0 auto;
+    padding: 20px 25px;
+    background: #ffffff;
+    border-top-left-radius: 40px;
+    border-top-right-radius: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    border: 1px solid #dadce0;
 }
 
-#stats span {
-    margin: 0 8px;
+#progressContainer {
+    width: 90%;
+    max-width: 500px;
+    margin: 15px auto 0 auto;
+    background: #ffffff;
+    padding: 20px 25px;
+    border-radius: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    border: 1px solid #dadce0;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+}
+
+.progress-header .title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a1a;
+    letter-spacing: 0.2px;
+}
+
+.progress-header .percent {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a1a;
 }
 
 #progressBar {
     display: flex;
-    width: 90%;
-    max-width: 500px;
-    height: 14px;
-    margin: 10px auto 20px auto;
-    border-radius: 7px;
+    width: 100%;
+    height: 8px;
+    border-radius: 6px;
     overflow: hidden;
-    background: #eee;
+    background: #eaeef2;
+    margin: 6px 0 14px 0;
 }
 
 #progressBar div {
@@ -204,15 +243,47 @@ button {
 }
 
 .progress-below {
-    background: #e05a5a;
+    background: #d9534f;
 }
 
 .progress-remaining {
-    background: #c9c9c9;
+    background: #d0d7de;
 }
 
 .progress-known {
-    background: #4caf82;
+    background: #5cb85c;
+}
+
+#progressLabels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #5f6368;
+    font-weight: 500;
+    padding-top: 4px;
+}
+
+#progressLabels span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#progressLabels .dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.dot-red   { background: #d9534f; }
+.dot-gray  { background: #d0d7de; }
+.dot-green { background: #5cb85c; }
+
+#progressLabels strong {
+    font-weight: 600;
+    color: #1a1a1a;
 }
 
 @keyframes segmentPulse {
@@ -283,7 +354,7 @@ button {
 }
 
   .google-btn {
-margin: 10px auto;
+    margin: 10px auto;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -292,9 +363,9 @@ margin: 10px auto;
     color: #3c4043;
     font-family: 'Segoe UI', Roboto, sans-serif;
     font-size: 14px;
-    padding: 6px 24px;
+    padding: 3px 24px;
     border: 1px solid #dadce0;
-border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 40px;
     cursor: pointer;
     box-shadow: 0 1px 3px rgba(0,0,0,0.2);
@@ -312,6 +383,9 @@ border: 1px solid rgba(255, 255, 255, 0.3);
   .google-icon {
     width: 16px;
     height: 16px;
+    position: relative;
+    top: +2px; /* lub 1px */
+    margin-right: 6px;
   }
 
 
@@ -336,7 +410,7 @@ border: 1px solid rgba(255, 255, 255, 0.3);
 	padding-right: 46px;
 	transition: all 0.3s ease;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-    margin-top: 10px;
+    margin-top: 5px;
 }
 
 .custom-select:hover {
@@ -549,6 +623,7 @@ border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .check-btn:hover {
+    color: #1a73e8;
 	border-color: #1a73e8;
     background: #f8f9fa;
     transform: translateY(-2px);
@@ -570,8 +645,8 @@ border: 1px solid rgba(255, 255, 255, 0.3);
 	font-size: 16px;
 	font-weight: 500;
 	color: #5f6368;
-	background: #e8eaed;
-	border: none;
+	background: #e3e6eb;
+	border: 1px solid #dadce0;
 	border-radius: 40px;
 	cursor: pointer;
 	transition: all 0.1s ease;
@@ -783,18 +858,24 @@ Brak dostępnych opcji
 Ładowanie listy plików...
 </p>
 
-<div id="stats">
-<span>Do poprawy: 0</span>
-<span>Pozostało: 0</span>
-<span>Znam: 0</span>
+<div id="progressContainer">
+    <div class="progress-header">
+        <span class="title">Postęp w nauce</span>
+        <span class="percent" id="percentDisplay">0%</span>
+    </div>
+    <div id="progressBar"></div>
+    <div id="progressLabels">
+        <span><span class="dot dot-red"></span>Do poprawy: <strong id="belowCount">0</strong></span>
+        <span><span class="dot dot-gray"></span>Pozostało: <strong id="remainingCount">0</strong></span>
+        <span><span class="dot dot-green"></span>Znam: <strong id="knownCount">0</strong></span>
+    </div>
 </div>
 
-<div id="progressBar"></div>
-
-<div id="word">
--
+<div id="wordContainer">
+    <div id="word">
+    -
+    </div>
 </div>
-
 
 <div id="answerRow">
   <div class="input-wrapper">
@@ -1246,7 +1327,8 @@ async function loadCsvFileList(){
         if(!response.ok){
 
             document.getElementById("info").innerHTML =
-            "Błąd ładowania listy plików (kod " + response.status + "). Sprawdź czy folder '" + CSV_FOLDER + "' istnieje w repo.";
+            // "Error " + response.status + ". Folder '" + CSV_FOLDER + "' doesn't exist.";
+            `Error ${response.status} ${response.statusText}` + "- Błąd ładowania list.";
 
             return;
 
@@ -1749,13 +1831,17 @@ function updateStats(){
 
     });
 
-    document.getElementById("stats").innerHTML =
-    "<span>Do poprawy: " + counts.below + "</span>" +
-    "<span>Pozostało: " + counts.remaining + "</span>" +
-    "<span>Znam: " + counts.known + "</span>";
-
-
     let total = words.length;
+
+    let percent = total > 0 ? Math.round((counts.known / total) * 100) : 0;
+
+    document.getElementById("percentDisplay").textContent = percent + "%";
+
+    document.getElementById("belowCount").textContent = counts.below;
+
+    document.getElementById("remainingCount").textContent = counts.remaining;
+
+    document.getElementById("knownCount").textContent = counts.known;
 
     let belowPct = total > 0 ? (counts.below / total * 100) : 0;
 
