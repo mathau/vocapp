@@ -323,7 +323,7 @@ border: 1px solid rgba(255, 255, 255, 0.3);
 	background: rgba(255, 255, 255, 0.7);
 	backdrop-filter: blur(10px);
 	-webkit-backdrop-filter: blur(10px);
-border: 1px solid #dadce0;
+    border: 1px solid #dadce0;
 	border-radius: 40px;
 	cursor: pointer;
 	appearance: none;
@@ -333,8 +333,8 @@ border: 1px solid #dadce0;
 	background-position: right 18px center;
 	padding-right: 46px;
 	transition: all 0.3s ease;
-	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-margin: 10 auto;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    margin-top: 10px;
 }
 
 .custom-select:hover {
@@ -358,6 +358,98 @@ margin: 10 auto;
 	color: #9aa0a6;
 }
 
+
+.direction-select {
+	padding: 2px 24px;
+	font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+	font-size: 14px;
+	color: #1a1a1a;
+	background: rgba(255, 255, 255, 0.7);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+    border: 1px solid #dadce0;
+	border-radius: 40px;
+	cursor: pointer;
+	appearance: none;
+	-webkit-appearance: none;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath d='M7 10L1 4h12z' fill='%233c4043'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right 18px center;
+	padding-right: 46px;
+	transition: all 0.3s ease;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    margin-bottom: 10px;
+    display: none;
+
+}
+
+.direction-select:hover {
+	box-shadow: 0 4px 20px rgba(26, 115, 232, 0.15);
+	transform: translateY(0px);
+	border-color: rgba(26, 115, 232, 0.3);
+}
+
+.direction-select:focus {
+	outline: none;
+	border-color: #1a73e8;
+	box-shadow: 0 4px 20px rgba(26, 115, 232, 0.2), 0 0 0 4px rgba(26, 115, 232, 0.1);
+}
+
+.direction-select option {
+	background: white;
+	padding: 12px;
+}
+
+.direction-select option:first-child {
+	color: #9aa0a6;
+}
+
+
+.select-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+
+.download-btn {
+    display:none;
+	padding: 8px 8px;
+	font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+	font-size: 12px;
+	color: #5f6368;
+	background: transparent;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: all 0.1s ease;
+	position: relative;
+}
+
+.download-btn::after {
+	content: '';
+	position: absolute;
+	bottom: 4px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 0;
+	height: 2px;
+	background: #1a73e8;
+	transition: width 0.3s ease;
+}
+
+.download-btn:hover {
+	color: #1a73e8;
+}
+
+.download-btn:hover::after {
+	width: 80%;
+}
+
+.download-btn:active {
+	transform: scale(0.95);
+}
 
 .logout-btn {
 	padding: 8px 16px;
@@ -613,19 +705,21 @@ Wyloguj
 </button>
 </div>
 
-<select id="csvList" onchange="loadSelectedCsv()" class="custom-select">
-<option value="">
-Wybierz listę do nauki
-</option>
-</select>
+<div class="select-container">
+    <select id="csvList" onchange="loadSelectedCsv()" class="custom-select">
+    <option value="">
+    Wybierz listę do nauki
+    </option>
+    </select>
 
-<select id="direction" onchange="nextWord()" style="display:none;">
-<option value="col2-col1">
-Wybierz listę słówek
-</option>
-</select>
+    <select id="direction" onchange="nextWord()" class="direction-select">
+    <option value="col2-col1">
+    Wybierz listę słówek
+    </option>
+    </select>
+</div>
 
-<button id="downloadCsvBtn" class="small-btn" style="display:none;" onclick="downloadUpdatedCsv()">
+<button id="downloadCsvBtn" class="download-btn" onclick="downloadUpdatedCsv()">
 ⬇ Pobierz aktualną listę
 </button>
 
