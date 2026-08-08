@@ -42,10 +42,6 @@ body {
     background-color: #f1f3f5;
 }
 
-#word {
-    font-size: 22px;
-}
-
 input {
     font-size: 15px;
     padding: 10px;
@@ -144,13 +140,13 @@ input {
 }
 
 #answer.correct-flash {
-    border-color: #82c7a8;
-    background-color: #82c7a8;
+    border-color: #6fcf97;
+    background-color: #6fcf97;
 }
 
 #answer.wrong-flash {
-    border-color: #e98c8c;
-    background-color: #e98c8c;
+    border-color: #eb8686;
+    background-color: #eb8686;
 }
 
 
@@ -179,9 +175,8 @@ button {
     margin: 10px;
 }
 
-#result {
-    font-size: 28px;
-    margin: 20px;
+#word {
+    font-size: 22px;
 }
 
 #wordContainer {
@@ -193,6 +188,22 @@ button {
     border-top-left-radius: 40px;
     border-top-right-radius: 40px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    border: 1px solid #dadce0;
+}
+
+#result {
+    font-size: 24px;
+}
+
+#resultContainer {
+    display: none;
+    width: 90%;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 15px 25px;
+    background: white;
+    border-radius: 40px;
+    box-shadow: 0 1px 10px #1a73e8;
     border: 1px solid #dadce0;
 }
 
@@ -892,10 +903,6 @@ Brak dostępnych opcji
   </div>
 </div>
 
-
-<br>
-
-
 <div class="button-container">
 	<button onclick="handleEnter()" class="check-btn">
 	Sprawdź
@@ -907,20 +914,23 @@ Brak dostępnych opcji
 	</button>
 </div>
 
-
 <div id="comboDisplay"></div>
 
-<div id="result"></div>
 
-<button id="overrideBtn" class="check-btn" style="display:none;" onclick="overrideCorrect()">
+<div id="resultContainer">
+    <div id="result"></div>
+</div>
+
+<div id="resultRef"></div>
+
+<button id="overrideBtn" class="check-btn" style="display: none;" onclick="overrideCorrect()">
 ↑ Mam rację
 </button>
 
 <div id="meaningEditBox" style="display:none; margin-top:10px;">
 <input id="meaningInput" placeholder="Nowe znaczenie" size="40">
-<button onclick="updateMeaning()">Aktualizuj</button>
+<button onclick="updateMeaning()" class="check-btn" style="display: inline-block;">Aktualizuj</button>
 </div>
-
 
 <script>
 
@@ -1322,6 +1332,9 @@ async function loadCsvFileList(){
         "https://api.github.com/repos/" + GITHUB_OWNER + "/" + GITHUB_REPO +
         "/contents/" + CSV_FOLDER + "?ref=" + GITHUB_BRANCH;
 
+        // TESTING URL
+        // url = "Wordbank/index.json";
+
         let response = await fetch(url);
 
         if(!response.ok){
@@ -1443,7 +1456,11 @@ function resetToEmptyState(){
 
     document.getElementById("answer").value = "";
 
+    document.getElementById("resultContainer").style.display="none";
+
     document.getElementById("result").innerHTML = "";
+
+    document.getElementById("resultRef").innerHTML = "";
 
     document.getElementById("overrideBtn").style.display = "none";
 
@@ -1944,8 +1961,11 @@ function nextWord(){
 
     document.getElementById("answer").value="";
 
-
+    document.getElementById("resultContainer").style.display="none";
+    
     document.getElementById("result").innerHTML="";
+
+    document.getElementById("resultRef").innerHTML="";
 
     document.getElementById("overrideBtn").style.display="none";
 
@@ -2021,7 +2041,7 @@ function checkAnswer(){
 	"https://www.diki.pl/slownik-angielskiego?q=" + encodeURIComponent(current.en);
 
 	let dikiLink =
-	'<div style="font-size:13px;margin-top:18px;">' +
+	'<div style="font-size:12px;margin:10px;">' +
 	'<a href="' + dikiUrl + '" target="_blank" rel="noopener noreferrer">Sprawdź tłumaczenie</a>' +
 	'</div>';
 
@@ -2032,7 +2052,7 @@ function checkAnswer(){
 	"https://dictionary.cambridge.org/dictionary/english/" + encodeURIComponent(cambridgeSlug);
 
 	let cambridgeLink =
-	'<div style="font-size:13px;margin-top:10px;">' +
+	'<div style="font-size:12px;margin:10px;">' +
 	'<a href="' + cambridgeUrl + '" target="_blank" rel="noopener noreferrer">Cambridge Dictionary</a>' +
 	'</div>';
 
@@ -2058,7 +2078,7 @@ function checkAnswer(){
             triggerConfettiBurst(false);
         }
 
-        document.getElementById("result").innerHTML=
+        document.getElementById("resultRef").innerHTML=
         dikiLink + cambridgeLink;
 
         autoAdvanceTimer = setTimeout(nextWord, 1200);
@@ -2079,8 +2099,15 @@ function checkAnswer(){
 
         resetCombo();
 
+        document.getElementById("resultContainer").style.display="block";
+
         document.getElementById("result").innerHTML=
-        correctAnswer + dikiLink + cambridgeLink;
+        correctAnswer;
+
+        document.getElementById("resultRef").innerHTML=
+        '<div style="display:flex; justify-content: center; gap:25px; font-size:13px; margin-top:2px;">' +
+        dikiLink + cambridgeLink;
+        '</div>';
 
         document.getElementById("overrideBtn").style.display="inline-block";
 
